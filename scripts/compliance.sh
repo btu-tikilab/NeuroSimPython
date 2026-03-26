@@ -6,13 +6,14 @@
 # dirCompliant: expected directory structure
 # State: Perfect(11), Good(10), Okay(01), Bad(00)
 
-ROOT="${1:-$(cd "$(dirname "$0")/.." && pwd)}"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT="${1:-"$SCRIPT_DIR/.."}"
 cd "$ROOT"
 
 out01() { [[ "$1" == "1" ]] && echo "01" || echo "00"; }
 
 # NeuroSim keeps the config alongside this script.
-CFG_FILE="${COMPLIANCE_CONFIG:-$ROOT/scripts/compliance.config.json}"
+CFG_FILE="${COMPLIANCE_CONFIG:-$SCRIPT_DIR/compliance.config.json}"
 
 # Minimal JSON array extractor (assumes arrays of strings, one level deep).
 # This avoids requiring jq/python/node on CI images.
