@@ -15,14 +15,25 @@ from pathlib import Path
 from typing import Any
 
 
-def import_base_algorithm() -> Any:
-    # samples/poc/_base_import.py -> NeuroSim/
+def _engine_src() -> Path:
     poc_dir = Path(__file__).resolve().parent
-    neuro_sim_root = poc_dir.parents[1]  # .../NeuroSim
-    engine_src = neuro_sim_root / "NeuroSim.Engine" / "src"
+    neuro_sim_root = poc_dir.parents[1]  # .../NeuroSimPython
+    return neuro_sim_root / "NeuroSim.Engine" / "src"
+
+
+def ensure_engine_src_on_path() -> Path:
+    """Insert `NeuroSim.Engine/src` on `sys.path` if missing (for POC imports)."""
+    engine_src = _engine_src()
     if not (engine_src / "neurosim_engine").exists():
         raise RuntimeError(f"NeuroSim.Engine python package not found at: {engine_src}")
-    sys.path.insert(0, str(engine_src))
+    s = str(engine_src)
+    if s not in sys.path:
+        sys.path.insert(0, s)
+    return engine_src
+
+
+def import_base_algorithm() -> Any:
+    ensure_engine_src_on_path()
     from neurosim_engine.core.base_algorithm import BaseAlgorithm  # type: ignore
 
     return BaseAlgorithm

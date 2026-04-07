@@ -2,7 +2,12 @@
 """
 NeuroSim.Engine (python) package root.
 
-This repo currently only ships a small core abstraction (BaseAlgorithm).
-Samples under `NeuroSim/samples/` import from here.
+Core: `BaseAlgorithm`, `BitstringGA` (generic bit GA).
+Samples under `NeuroSimPython/samples/poc/` import from here via `sys.path`.
 """
+
+from neurosim_engine.binary_ga import BitIndividual, BitstringGA
+from neurosim_engine.core.base_algorithm import BaseAlgorithm
+
+__all__ = ["BaseAlgorithm", "BitIndividual", "BitstringGA"]
 
