@@ -1,0 +1,267 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "BitGA Engine API",
+    "version": "1.0.0",
+    "description": "Bitstring Genetic Algorithm - Backend API"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8000",
+      "description": "Local development"
+    }
+  ],
+  "paths": {
+    "/app-info": {
+      "get": {
+        "summary": "Application Information",
+        "tags": ["General"],
+        "responses": {
+          "200": {
+            "description": "App info",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "appName": {"type": "string"},
+                    "version": {"type": "string"}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/playgrounds": {
+      "get": {
+        "summary": "List Available Playgrounds",
+        "tags": ["General"],
+        "responses": {
+          "200": {
+            "description": "List of playgrounds",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "playgrounds": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {"type": "string"},
+                          "name": {"type": "string"},
+                          "description": {"type": "string"}
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/bitga/problems": {
+      "get": {
+        "summary": "List BitGA Problems",
+        "tags": ["BitGA"],
+        "responses": {
+          "200": {
+            "description": "Available problems",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "problems": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {"type": "string"},
+                          "name": {"type": "string"},
+                          "description": {"type": "string"}
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/bitga/run": {
+      "post": {
+        "summary": "Run BitGA Simulation",
+        "tags": ["BitGA"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "problem": {
+                    "type": "string",
+                    "enum": ["onemax", "knapsack"],
+                    "example": "onemax"
+                  },
+                  "bitstringLength": {
+                    "type": "integer",
+                    "example": 20
+                  },
+                  "populationSize": {
+                    "type": "integer",
+                    "example": 100
+                  },
+                  "generations": {
+                    "type": "integer",
+                    "example": 100
+                  },
+                  "mutationRate": {
+                    "type": "number",
+                    "example": 0.05
+                  },
+                  "tournamentSize": {
+                    "type": "integer",
+                    "example": 3
+                  },
+                  "seed": {
+                    "type": "integer",
+                    "example": 42
+                  }
+                },
+                "required": ["problem", "bitstringLength", "populationSize", "generations"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Run completed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "runId": {"type": "string"},
+                    "bestFitness": {"type": "number"},
+                    "bestSolution": {
+                      "type": "array",
+                      "items": {"type": "integer"}
+                    },
+                    "generationsToConvergence": {"type": "integer"},
+                    "totalGenerations": {"type": "integer"},
+                    "convergenceHistory": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "generation": {"type": "integer"},
+                          "bestFitness": {"type": "number"},
+                          "avgFitness": {"type": "number"},
+                          "worstFitness": {"type": "number"},
+                          "bestGenome": {
+                            "type": "array",
+                            "items": {"type": "integer"}
+                          }
+                        }
+                      }
+                    },
+                    "executionTimeSeconds": {"type": "number"}
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid parameters"
+          }
+        }
+      }
+    },
+    "/bitga/generation/{generationId}": {
+      "get": {
+        "summary": "Get Generation Snapshot",
+        "tags": ["BitGA"],
+        "parameters": [
+          {
+            "name": "generationId",
+            "in": "path",
+            "required": true,
+            "schema": {"type": "integer"}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Generation stats",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "generation": {"type": "integer"},
+                    "bestFitness": {"type": "number"},
+                    "avgFitness": {"type": "number"},
+                    "worstFitness": {"type": "number"},
+                    "bestGenome": {
+                      "type": "array",
+                      "items": {"type": "integer"}
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/bitga/genome/{runId}/{generationId}": {
+      "get": {
+        "summary": "Get Genome for Visualization",
+        "tags": ["BitGA"],
+        "parameters": [
+          {
+            "name": "runId",
+            "in": "path",
+            "required": true,
+            "schema": {"type": "string"}
+          },
+          {
+            "name": "generationId",
+            "in": "path",
+            "required": true,
+            "schema": {"type": "integer"}
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Genome data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "bitstring": {
+                      "type": "array",
+                      "items": {"type": "integer"}
+                    },
+                    "fitness": {"type": "number"},
+                    "generation": {"type": "integer"},
+                    "problem": {"type": "string"}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
