@@ -1,0 +1,48 @@
+# NeuroSim.UI - Development TODO
+
+This document tracks pending improvements and completed tasks for the NeuroSim.UI frontend.
+
+---
+
+## ✅ Completed
+
+- [x] Home page UI implementation
+- [x] Wiki page implementation
+- [x] Sidebar navigation
+- [x] Playground cards
+- [x] Git integration and push to `devs` branch
+
+---
+
+## 🚧 Pending Tasks
+
+### 1. Replace Paradigm Cards with Dropdown
+**Priority:** High
+
+**Description**
+- Remove the paradigm cards from the Wiki overview.
+- Add a dropdown list for selecting an evolutionary paradigm.
+- Display the selected paradigm's description, workflow, applications, and operators dynamically.
+
+---
+
+### 2. Convert Navigation to React Router
+
+**Description**
+- Replace the current state-based navigation (`activeItem`) with React Router.
+- Support URL-based navigation.
+- Enable browser back/forward navigation.
+- Improve scalability for future pages.
+
+---
+
+### 3. Add Result Snapshots
+
+**Description**
+- Add screenshots or sample outputs for:
+  - GraphGA
+  - BitGA
+  - Future playgrounds
+- Display expected optimization results inside the Wiki documentation.
+
+---
