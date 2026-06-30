@@ -1,0 +1,759 @@
+/* ==========================================================
+   WIKI LAYOUT
+========================================================== */
+
+.wiki{
+    display:flex;
+    min-height:100vh;
+    background:#f7f8fc;
+}
+
+/* ==========================================================
+   SIDEBAR
+========================================================== */
+
+.wiki__sidebar{
+
+    width:270px;
+    min-width:270px;
+
+    background:#ffffff;
+
+    border-right:1px solid #ececec;
+
+    display:flex;
+    flex-direction:column;
+
+    position:sticky;
+    top:0;
+
+    height:100vh;
+
+    overflow-y:auto;
+}
+
+.wiki__sidebar-header{
+
+    padding:30px 25px;
+
+    border-bottom:1px solid #ececec;
+}
+
+.wiki__sidebar-header h2{
+
+    font-size:28px;
+
+    font-weight:700;
+
+    color:#222;
+
+    margin-bottom:8px;
+}
+
+.wiki__sidebar-header p{
+
+    color:#777;
+
+    line-height:1.6;
+
+    font-size:14px;
+}
+
+.wiki__menu{
+
+    padding:18px;
+}
+
+.wiki__menu-item{
+
+    width:100%;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    border:none;
+
+    background:transparent;
+
+    padding:14px 16px;
+
+    margin-bottom:8px;
+
+    border-radius:12px;
+
+    cursor:pointer;
+
+    font-size:15px;
+
+    transition:.25s;
+}
+
+.wiki__menu-item:hover{
+
+    background:#f1efff;
+}
+
+.wiki__menu-item--active{
+
+    background:#6d4aff;
+
+    color:white;
+
+    font-weight:600;
+}
+
+.wiki__arrow{
+
+    font-size:18px;
+}
+
+/* ==========================================================
+   MAIN CONTENT
+========================================================== */
+
+.wiki__content{
+    flex:1;
+    width:100%;
+    min-width:0;
+    padding:45px;
+    overflow-y:auto;
+}
+/* ==========================================================
+   HERO
+========================================================== */
+
+.wiki__hero{
+
+    background:linear-gradient(
+        135deg,
+        #6d4aff,
+        #8c73ff
+    );
+
+    border-radius:22px;
+
+    padding:55px;
+
+    color:white;
+
+    margin-bottom:45px;
+
+    box-shadow:
+    0 18px 40px rgba(109,74,255,.22);
+}
+
+.wiki__badge{
+
+    display:inline-block;
+
+    padding:8px 16px;
+
+    background:rgba(255,255,255,.18);
+
+    border-radius:40px;
+
+    font-size:13px;
+
+    margin-bottom:20px;
+}
+
+.wiki__hero-title{
+
+    font-size:52px;
+
+    font-weight:800;
+
+    margin-bottom:18px;
+}
+
+.wiki__hero-description{
+
+    font-size:17px;
+
+    line-height:1.9;
+
+    max-width:780px;
+}
+
+/* ==========================================================
+   SECTION
+========================================================== */
+
+.wiki__section{
+
+    width:100%;
+
+    max-width:100%;
+
+    margin-bottom:60px;
+}
+
+.wiki__section-header{
+
+    margin-bottom:24px;
+}
+
+.wiki__heading{
+
+    font-size:34px;
+
+    color:#222;
+
+    margin-bottom:10px;
+}
+
+.wiki__subheading{
+
+    color:#777;
+
+    font-size:16px;
+}
+
+.wiki__text{
+
+    font-size:16px;
+
+    line-height:1.9;
+
+    color:#555;
+
+    max-width:900px;
+
+    margin-bottom:20px;
+}
+
+/* ==========================================================
+   PARADIGM CARDS
+========================================================== */
+
+.wiki__cards{
+
+    display:grid;
+
+    grid-template-columns:
+    repeat(auto-fit,minmax(300px,1fr));
+
+    gap:25px;
+}
+
+.wiki__card{
+
+    background:white;
+
+    border-radius:20px;
+
+    padding:28px;
+
+    box-shadow:
+    0 10px 30px rgba(0,0,0,.05);
+
+    transition:.35s;
+}
+
+.wiki__card:hover{
+
+    transform:translateY(-8px);
+
+    box-shadow:
+    0 20px 45px rgba(0,0,0,.12);
+}
+
+.wiki__card-header{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:18px;
+
+    margin-bottom:20px;
+}
+
+.wiki__card-icon{
+
+    width:62px;
+
+    height:62px;
+
+    border-radius:16px;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    font-size:28px;
+}
+
+.wiki__card-title{
+
+    font-size:21px;
+
+    font-weight:700;
+}
+
+.wiki__card-description{
+
+    color:#666;
+
+    line-height:1.8;
+
+    margin-bottom:22px;
+}
+
+.wiki__card-link{
+
+    border:none;
+
+    background:none;
+
+    cursor:pointer;
+
+    font-weight:700;
+
+    font-size:15px;
+}
+/* ==========================================================
+   HOW EVOLUTION WORKS
+========================================================== */
+
+.wiki__flow{
+
+    display:flex;
+
+    align-items:center;
+
+    flex-wrap:wrap;
+
+    gap:18px;
+
+    margin-top:35px;
+}
+
+.wiki__flow-card{
+
+    width:170px;
+
+    background:#ffffff;
+
+    border-radius:18px;
+
+    padding:22px;
+
+    text-align:center;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.05);
+
+    transition:.3s;
+}
+
+.wiki__flow-card:hover{
+
+    transform:translateY(-5px);
+}
+
+.wiki__flow-number{
+
+    width:42px;
+
+    height:42px;
+
+    margin:auto;
+
+    border-radius:50%;
+
+    background:#6d4aff;
+
+    color:white;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    font-weight:bold;
+
+    margin-bottom:15px;
+}
+
+.wiki__flow-title{
+
+    font-size:17px;
+
+    font-weight:700;
+
+    color:#222;
+
+    margin-bottom:10px;
+}
+
+.wiki__flow-sub{
+
+    color:#666;
+
+    line-height:1.6;
+
+    font-size:14px;
+}
+
+.wiki__flow-arrow{
+
+    font-size:30px;
+
+    color:#6d4aff;
+
+    font-weight:bold;
+}
+
+/* ==========================================================
+   KEY CONCEPTS
+========================================================== */
+
+.wiki__concept-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(2,1fr);
+
+    gap:18px;
+}
+
+.wiki__concept-card{
+
+    background:#ffffff;
+
+    border-radius:16px;
+
+    padding:24px;
+
+    box-shadow:0 8px 25px rgba(0,0,0,.05);
+
+    transition:.3s;
+}
+
+.wiki__concept-card:hover{
+
+    transform:translateY(-6px);
+}
+
+.wiki__concept-title{
+
+    color:#6d4aff;
+
+    font-size:20px;
+
+    margin-bottom:12px;
+
+    font-weight:700;
+}
+
+.wiki__concept-description{
+
+    color:#666;
+
+    line-height:1.8;
+}
+
+/* ==========================================================
+   DETAIL PAGES
+========================================================== */
+
+.wiki__back-btn{
+
+    border:none;
+
+    background:none;
+
+    color:#6d4aff;
+
+    cursor:pointer;
+
+    font-size:15px;
+
+    margin-bottom:25px;
+
+    font-weight:600;
+}
+
+.wiki__back-btn:hover{
+
+    text-decoration:underline;
+}
+
+.wiki__detail-table{
+
+    background:#ffffff;
+
+    border-radius:18px;
+
+    overflow:hidden;
+
+    margin-top:30px;
+
+    margin-bottom:30px;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.05);
+}
+
+.wiki__detail-row{
+
+    display:grid;
+
+    grid-template-columns:260px 1fr;
+
+    gap:28px;
+
+    padding:22px 26px;
+
+    align-items:flex-start;
+
+    border-bottom:1px solid #ececec;
+}
+
+.wiki__detail-row:last-child{
+
+    border-bottom:none;
+}
+
+.wiki__detail-row strong{
+
+    color:#6d4aff;
+
+    font-size:15px;
+}
+
+.wiki__detail-row span{
+
+    color:#555;
+
+    line-height:1.7;
+}
+
+/* ==========================================================
+   BUTTONS
+========================================================== */
+
+.wiki__open-btn{
+
+    border:none;
+
+    background:#6d4aff;
+
+    color:white;
+
+    padding:14px 28px;
+
+    border-radius:12px;
+
+    cursor:pointer;
+
+    font-size:15px;
+
+    font-weight:600;
+
+    transition:.3s;
+}
+
+.wiki__open-btn:hover{
+
+    background:#5637eb;
+
+    transform:translateY(-2px);
+}
+
+/* ==========================================================
+   RESPONSIVE
+========================================================== */
+
+@media (max-width:1000px){
+
+    .wiki{
+
+        flex-direction:column;
+    }
+
+    .wiki__sidebar{
+
+        width:100%;
+
+        min-width:100%;
+
+        height:auto;
+
+        position:relative;
+
+        border-right:none;
+
+        border-bottom:1px solid #ececec;
+    }
+
+    .wiki__content{
+
+    flex:1;
+
+    padding:45px;
+
+    overflow-y:auto;
+
+    display:flex;
+
+    flex-direction:column;
+}
+
+    .wiki__hero{
+
+        padding:35px;
+    }
+
+    .wiki__hero-title{
+
+        font-size:38px;
+    }
+
+    .wiki__detail-row{
+
+        grid-template-columns:1fr;
+
+        gap:8px;
+    }
+
+}
+
+@media (max-width:700px){
+
+    .wiki__cards{
+
+        grid-template-columns:1fr;
+    }
+
+    .wiki__concept-grid{
+
+        grid-template-columns:1fr;
+    }
+
+    .wiki__flow{
+
+        flex-direction:column;
+
+        align-items:stretch;
+    }
+
+    .wiki__flow-arrow{
+
+        transform:rotate(90deg);
+    }
+
+}
+
+.wiki__guides{
+    width:100%;
+    display:grid;
+    grid-template-columns:repeat(2, minmax(440px,1fr));
+    gap:30px;
+    align-items:stretch;
+}
+
+
+.wiki__guide-card{
+    width:100%;
+    min-width:0;
+
+    display:flex;
+    flex-direction:column;
+
+    padding:30px;
+
+    background:#fff;
+
+    border:1px solid #ececec;
+
+    border-radius:20px;
+
+    box-shadow:0 10px 25px rgba(0,0,0,.05);
+}
+
+.wiki__guide-footer{
+
+    margin-top:auto;
+
+    display:flex;
+
+    justify-content:flex-end;
+}
+.wiki__guide-card:hover{
+
+    transform:translateY(-4px);
+
+    box-shadow:0 18px 40px rgba(0,0,0,.08);
+}
+
+.wiki__guide-card h2{
+
+    font-size:32px;
+
+    margin-bottom:24px;
+
+    color:#222;
+}
+
+.wiki__guide-card ol{
+
+    padding-left:24px;
+
+    line-height:2;
+
+    color:#555;
+
+    margin-bottom:28px;
+}
+.wiki__operator-left{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+}
+
+.wiki__operator-name{
+    font-size:18px;
+    font-weight:700;
+    color:#1f2937;
+    font-family:monospace;
+}
+
+.wiki__operator-description{
+    color:#4b5563;
+    line-height:1.8;
+    font-size:15px;
+}
+
+.wiki__operator-badge{
+    display:inline-flex;
+    width:max-content;
+    padding:3px 10px;
+    border-radius:6px;
+    font-size:12px;
+    font-weight:700;
+    border:1px solid;
+}
+
+.wiki__badge-crossover{
+    background:#eef2ff;
+    color:#4f46e5;
+    border-color:#c7d2fe;
+}
+
+.wiki__badge-mutation{
+    background:#fff7ed;
+    color:#ea580c;
+    border-color:#fdba74;
+}
+
+.wiki__badge-selection{
+    background:#ecfdf5;
+    color:#059669;
+    border-color:#86efac;
+}

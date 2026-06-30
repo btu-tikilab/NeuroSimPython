@@ -1,0 +1,512 @@
+/* ===================================================
+   HOME PAGE
+=================================================== */
+
+.home {
+  flex: 1;
+  min-height: 100vh;
+  overflow-y: auto;
+
+  width: 100%;
+  max-width: 1400px;
+
+  margin: 0 auto;
+
+  padding: 35px 50px;
+}
+/* ===================================================
+   HERO SECTION
+=================================================== */
+
+.home__hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 50px;
+
+  border-radius: 24px;
+
+  margin-bottom: 50px;
+
+  background: linear-gradient(
+    135deg,
+    #ffffff,
+    #f6f3ff
+  );
+
+  box-shadow: 0 15px 40px rgba(0,0,0,.08);
+}
+
+.home__hero-content{
+  max-width:600px;
+}
+
+/* Small title */
+
+.home__hero-tag{
+  display:inline-block;
+
+  padding:8px 16px;
+
+  border-radius:30px;
+
+  background:#ede9fe;
+
+  color:#6d4aff;
+
+  font-size:13px;
+  font-weight:600;
+
+  margin-bottom:18px;
+}
+
+/* NeuroSim */
+
+.home__hero-title{
+
+  font-size:56px;
+
+  font-weight:800;
+
+  color:#2c2455;
+
+  margin-bottom:10px;
+}
+
+/* Evolutionary Intelligence */
+
+.home__hero-heading{
+
+  font-size:38px;
+
+  line-height:1.25;
+
+  color:#111827;
+
+  margin-bottom:25px;
+}
+
+/* Description */
+
+.home__hero-description{
+
+  font-size:17px;
+
+  line-height:1.8;
+
+  color:#6b7280;
+
+  margin-bottom:35px;
+}
+
+/* ===================================================
+   BUTTONS
+=================================================== */
+
+.home__hero-buttons{
+
+  display:flex;
+
+  gap:18px;
+}
+
+/* Primary */
+
+.home__primary-btn{
+
+  display:flex;
+
+  align-items:center;
+
+  gap:10px;
+
+  padding:14px 26px;
+
+  border:none;
+
+  border-radius:12px;
+
+  background:#6d4aff;
+
+  color:white;
+
+  font-size:15px;
+
+  font-weight:600;
+
+  cursor:pointer;
+
+  transition:.3s;
+}
+
+.home__primary-btn:hover{
+
+  transform:translateY(-3px);
+
+  background:#5b34ff;
+
+  box-shadow:0 10px 25px rgba(109,74,255,.35);
+}
+
+/* Secondary */
+
+.home__secondary-btn{
+
+  display:flex;
+
+  align-items:center;
+
+  gap:10px;
+
+  padding:14px 26px;
+
+  border:2px solid #6d4aff;
+
+  border-radius:12px;
+
+  background:white;
+
+  color:#6d4aff;
+
+  font-size:15px;
+
+  font-weight:600;
+
+  cursor:pointer;
+
+  transition:.3s;
+}
+
+.home__secondary-btn:hover{
+
+  background:#6d4aff;
+
+  color:white;
+
+  transform:translateY(-3px);
+}
+
+/* ===================================================
+   IMAGE
+=================================================== */
+
+.home__hero-image{
+
+  width:430px;
+
+  display:flex;
+
+  justify-content:center;
+
+  align-items:center;
+}
+
+.home__hero-image img{
+
+  width:100%;
+
+  max-width:400px;
+
+  animation:float 5s ease-in-out infinite;
+
+  filter:drop-shadow(
+      0 15px 35px
+      rgba(109,74,255,.25)
+  );
+}
+
+/* Floating Animation */
+
+@keyframes float{
+
+  0%{
+
+    transform:translateY(0px);
+  }
+
+  50%{
+
+    transform:translateY(-12px);
+  }
+
+  100%{
+
+    transform:translateY(0px);
+  }
+}
+/* ===================================================
+   SECTION
+=================================================== */
+
+.home__section{
+    margin-bottom:60px;
+}
+
+.home__section-header{
+  text-align:center;
+  margin-bottom:30px;
+}
+
+.home__section-header h2{
+    font-size:30px;
+    font-weight:700;
+    color:#e7d8d8;
+    margin-bottom:8px;
+}
+
+.home__section-header p{
+    font-size:16px;
+    color:#f1ecec;
+}
+
+/* ===================================================
+   GRID
+=================================================== */
+
+.home__grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:25px;
+}
+
+/* ===================================================
+   CARD
+=================================================== */
+
+.home__card{
+
+    background:white;
+    cursor: pointer;
+
+    border-radius:20px;
+
+    padding:28px;
+
+    border:1px solid #ebe8ff;
+
+    display:flex;
+    flex-direction:column;
+
+    transition:all .35s ease;
+
+    position:relative;
+
+    overflow:hidden;
+}
+
+/* Purple line animation */
+
+.home__card::before{
+
+    content:"";
+
+    position:absolute;
+
+    top:0;
+    left:-100%;
+
+    width:100%;
+    height:4px;
+
+    background:#6d4aff;
+
+    transition:.35s;
+}
+
+.home__card:hover::before{
+
+    left:0;
+}
+
+/* Card Hover */
+
+.home__card:hover{
+
+    transform:translateY(-10px);
+
+    border-color:#6d4aff;
+
+    box-shadow:
+    0 20px 45px rgba(109,74,255,.18);
+}
+
+/* ===================================================
+   CARD TOP
+=================================================== */
+
+.home__card-top{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:30px;
+}
+
+/* ===================================================
+   ICON
+=================================================== */
+
+.home__card-icon{
+
+    width:70px;
+    height:70px;
+
+    border-radius:18px;
+
+    background:#ede9fe;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    font-size:30px;
+
+    color:#6d4aff;
+
+    transition:.35s;
+}
+
+.home__card:hover .home__card-icon{
+
+    transform:scale(1.12) rotate(-5deg);
+
+    background:#6d4aff;
+
+    color:white;
+}
+
+/* ===================================================
+   STATUS BADGES
+=================================================== */
+
+.home__status{
+
+    padding:6px 12px;
+
+    border-radius:50px;
+
+    font-size:12px;
+
+    font-weight:600;
+}
+
+.available{
+
+    background:#e9f9ef;
+
+    color:#159947;
+}
+
+.coming{
+
+    background:#fff4df;
+
+    color:#d97706;
+}
+
+/* ===================================================
+   TITLE
+=================================================== */
+
+.home__card-title{
+
+    font-size:22px;
+
+    font-weight:700;
+
+    color:#1f2937;
+
+    margin-bottom:10px;
+}
+
+/* ===================================================
+   DESCRIPTION
+=================================================== */
+
+.home__card-description{
+
+    color:#6b7280;
+
+    line-height:1.7;
+
+    font-size:15px;
+
+    flex:1;
+
+    margin-bottom:28px;
+}
+
+/* ===================================================
+   BUTTON
+=================================================== */
+
+.home__card-button{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    width:100%;
+
+    background:none;
+
+    border:none;
+
+    padding:0;
+
+    color:#6d4aff;
+
+    font-weight:600;
+
+    font-size:15px;
+
+    cursor:pointer;
+}
+
+/* Arrow Animation */
+
+.home__arrow{
+
+    transition:.3s;
+}
+
+.home__card:hover .home__arrow{
+
+    transform:translateX(8px);
+}
+.home__footer {
+    margin-top: 60px;
+    padding: 30px 0;
+
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+}
+
+.home__footer h3 {
+    font-size: 32px;
+    margin-bottom: 10px;
+}
+
+.home__footer p {
+    font-size: 18px;
+    margin-bottom: 12px;
+    color: #8b8b8b;
+}
+
+.home__footer span {
+    font-size: 15px;
+    color: #9a9a9a;
+}

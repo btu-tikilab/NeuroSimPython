@@ -1,0 +1,38 @@
+.playground-card {
+  background: white;
+
+  border-radius: 20px;
+
+  padding: 25px;
+
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+
+  transition: 0.3s;
+}
+
+.playground-card:hover {
+  transform: translateY(-5px);
+}
+
+.playground-card h2 {
+  margin-bottom: 15px;
+}
+
+.playground-card p {
+  color: #555;
+  margin-bottom: 20px;
+}
+
+.playground-card button {
+  background: #4f46e5;
+
+  color: white;
+
+  border: none;
+
+  padding: 10px 20px;
+
+  border-radius: 10px;
+
+  cursor: pointer;
+}
