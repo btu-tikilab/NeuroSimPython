@@ -21,19 +21,35 @@ body {
 
 .app-layout {
   display: flex;
-  height: 100vh;      /* Full screen */
-  overflow: hidden;   /* Prevent whole page scrolling */
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
 }
+
+/* Sidebar */
+
+.sidebar {
+  flex-shrink: 0;
+}
+
+/* Main Content */
+
+.app-layout > :not(.sidebar) {
+  flex: 1;
+  overflow-y: auto;
+  transition: all 0.3s ease;
+}
+
 /* Dark Theme */
 
 .app-layout--dark {
-    background: #13111f;
-    color: white;
+  background: #13111f;
+  color: white;
 }
 
 /* Light Theme */
 
 .app-layout--light {
-    background: white;
-    color: black;
+  background: white;
+  color: black;
 }

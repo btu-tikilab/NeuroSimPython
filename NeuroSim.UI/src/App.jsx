@@ -13,29 +13,43 @@ import EP from "./Pages/EP/EP";
 import './App.css';
 
 export default function App() {
-  const [activeItem, setActiveItem] = useState('Home');
-  const [theme, setTheme] = useState('dark');
+  const [activeItem, setActiveItem] = useState("Home");
+  const [theme, setTheme] = useState("dark");
+  const [collapsed, setCollapsed] = useState(false);
 
   return (
-    <div className={`app-layout ${theme === "dark" ? "app-layout--dark" : "app-layout--light"}`}>
+    <div
+      className={`app-layout ${
+        theme === "dark"
+          ? "app-layout--dark"
+          : "app-layout--light"
+      }`}
+    >
       <Sidebar
-    activeItem={activeItem}
-    onNavigate={setActiveItem}
-    theme={theme}
-    setTheme={setTheme}
-/>
-      {activeItem === "Home" && <Home onNavigate={setActiveItem} />}
-{activeItem === "Wiki" && (
-    <Wiki onNavigate={setActiveItem} />
-)}
-{activeItem === "BitGA" && <BitGA />}
-{activeItem === "GraphGA" && <GraphGA />}
-{activeItem === "TSP" && <TSP />}
-{activeItem === "MazeNet" && <MazeNet />}
-{activeItem === "GA" && <GA />}
-{activeItem === "GP" && <GP />}
-{activeItem === "ES" && <ES />}
-{activeItem === "EP" && <EP />}
+        activeItem={activeItem}
+        onNavigate={setActiveItem}
+        theme={theme}
+        setTheme={setTheme}
+        collapsed={collapsed}
+        setCollapsed={setCollapsed}
+      />
+
+      {activeItem === "Home" && (
+        <Home onNavigate={setActiveItem} />
+      )}
+
+      {activeItem === "Wiki" && (
+        <Wiki onNavigate={setActiveItem} />
+      )}
+
+      {activeItem === "BitGA" && <BitGA />}
+      {activeItem === "GraphGA" && <GraphGA />}
+      {activeItem === "TSP" && <TSP />}
+      {activeItem === "MazeNet" && <MazeNet />}
+      {activeItem === "GA" && <GA />}
+      {activeItem === "GP" && <GP />}
+      {activeItem === "ES" && <ES />}
+      {activeItem === "EP" && <EP />}
     </div>
   );
 }
