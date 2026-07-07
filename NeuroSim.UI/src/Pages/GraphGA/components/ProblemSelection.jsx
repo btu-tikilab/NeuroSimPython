@@ -4,7 +4,7 @@ import "./ProblemSelection.css";
 import { FaProjectDiagram, FaRoute } from "react-icons/fa";
 import { HiOutlineInformationCircle } from "react-icons/hi";
 
-const ProblemSelection = ({ selectedParadigm, back }) => {
+const ProblemSelection = ({ selectedParadigm, back, next }) => {
 
   const [selectedProblem, setSelectedProblem] = useState("");
 
@@ -70,7 +70,7 @@ const ProblemSelection = ({ selectedParadigm, back }) => {
                 ? "selected-card"
                 : ""
             }`}
-            onClick={() => setSelectedProblem(problem.id)}
+            onClick={() => {setSelectedProblem(problem.id);next(problem.id);}}
           >
 
             <div
@@ -90,13 +90,14 @@ const ProblemSelection = ({ selectedParadigm, back }) => {
             <p>{problem.description}</p>
 
             <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setSelectedProblem(problem.id);
-              }}
-            >
-              Select
-            </button>
+  onClick={(e) => {
+    e.stopPropagation();
+    setSelectedProblem(problem.id);
+    next(problem.id);
+  }}
+>
+  Select
+</button>
 
           </div>
 
@@ -153,11 +154,16 @@ const ProblemSelection = ({ selectedParadigm, back }) => {
         >
           ← Back
         </button>
-        <button
-        className="next-btn"
+<div className="button-section">
+
+    <button
+        className="back-btn"
+        onClick={back}
     >
-        Next →
+        ← Back
     </button>
+
+</div>
 
       </div>
       </div>
