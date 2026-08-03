@@ -19,10 +19,42 @@ import { HiOutlineInformationCircle } from "react-icons/hi";
 const Configuration = ({ back }) => {
   const [allowSelfLoop, setAllowSelfLoop] = useState(false);
 
-  const [nodeCount, setNodeCount] = useState(20);
-  const [graphMode, setGraphMode] = useState("Directed");
-  const [randomSeed, setRandomSeed] = useState(42);
-  const [graphVersion, setGraphVersion] = useState(0);
+const [nodeCount, setNodeCount] = useState(20);
+const [graphMode, setGraphMode] = useState("Directed");
+const [randomSeed, setRandomSeed] = useState(42);
+
+const [connectivityBonus, setConnectivityBonus] = useState(10);
+const [sparsityPenalty, setSparsityPenalty] = useState(2);
+
+const [populationSize, setPopulationSize] = useState(100);
+const [maxGenerations, setMaxGenerations] = useState(250);
+
+const [parentSelection, setParentSelection] =
+    useState("Tournament");
+
+const [tournamentSize, setTournamentSize] =
+    useState(5);
+
+const [crossoverType, setCrossoverType] =
+    useState("Uniform Graph");
+
+const [crossoverRate, setCrossoverRate] =
+    useState(0.8);
+
+const [mutationType, setMutationType] =
+    useState("Edge Flip");
+
+const [mutationRate, setMutationRate] =
+    useState(0.02);
+
+const [eliteCount, setEliteCount] =
+    useState(2);
+
+const [targetFitness, setTargetFitness] =
+    useState(100);
+
+const [graphVersion, setGraphVersion] =
+    useState(0);
 
   return (
     <div className="configuration-page">
@@ -104,6 +136,8 @@ const Configuration = ({ back }) => {
 
                 <input
                   type="number"
+                  min={1}
+                  max={100}
                   value={nodeCount}
                   onChange={(e) => setNodeCount(Number(e.target.value))}
                 />
@@ -168,6 +202,7 @@ const Configuration = ({ back }) => {
                 <input
                   type="number"
                   value={randomSeed}
+                  min={0}
                   onChange={(e) => setRandomSeed(Number(e.target.value))}
                 />
 
@@ -190,12 +225,20 @@ const Configuration = ({ back }) => {
 
               <div className="form-group">
                 <label>Connectivity Bonus</label>
-                <input type="number" placeholder="10" />
+                <input type="number" 
+                 value={connectivityBonus}
+                 min={0}
+                 onChange={(e) => setConnectivityBonus(Number(e.target.value))}
+                />
               </div>
 
               <div className="form-group">
                 <label>Sparsity Penalty</label>
-                <input type="number" placeholder="2" />
+                <input type="number"
+                 value={sparsityPenalty}
+                 min={0}
+                 onChange={(e) => setSparsityPenalty(Number(e.target.value))}
+                />
               </div>
 
             </div>
@@ -217,7 +260,12 @@ const Configuration = ({ back }) => {
                   Population Size
                   <HiOutlineInformationCircle className="info-icon" />
                 </label>
-                <input type="number" placeholder="100" />
+                <input type="number"
+                value={populationSize}
+                min={1}
+                max={populationSize}
+                onChange={(e) => setPopulationSize(Number(e.target.value))}
+               />
               </div>
 
               <div className="form-group">
@@ -225,7 +273,12 @@ const Configuration = ({ back }) => {
                   Max Generations
                   <HiOutlineInformationCircle className="info-icon" />
                 </label>
-                <input type="number" placeholder="250" />
+                <input type="number"
+                 value={maxGenerations}
+                 min={1}
+                 max={1000}
+                 onChange={(e) => setMaxGenerations(Number(e.target.value))}
+                />
               </div>
 
               <div className="form-group">
@@ -233,30 +286,46 @@ const Configuration = ({ back }) => {
                   Parent Selection
                   <HiOutlineInformationCircle className="info-icon" />
                 </label>
-                <select>
+                <select
+                  value={parentSelection}
+                  onChange={(e) =>
+                      setParentSelection(e.target.value)
+                  }
+                >
                   <option>Tournament</option>
                   <option>Roulette Wheel</option>
                   <option>Rank</option>
                 </select>
               </div>
 
-              <div className="form-group">
-                <label>
-                  Tournament Size
-                  <HiOutlineInformationCircle className="info-icon" />
-                </label>
-                <input type="number" placeholder="5" />
-              </div>
+              {parentSelection === "Tournament" && (
+                <div className="form-group">
+                    <label>
+                        Tournament Size
+                        <HiOutlineInformationCircle className="info-icon" />
+                    </label>
+
+                    <input
+                      type="number"
+                      value={tournamentSize}
+                      min={2}
+                      onChange={(e) =>
+                          setTournamentSize(Number(e.target.value))
+                      }
+                    />
+                </div>
+        )}
 
               <div className="form-group">
                 <label>
                   Crossover Type
                   <HiOutlineInformationCircle className="info-icon" />
                 </label>
-                <select>
-                  <option>One Point</option>
-                  <option>Two Point</option>
-                  <option>Uniform</option>
+                <select
+                  value={crossoverType}
+                  onChange={(e) => setCrossoverType(e.target.value)}
+                >
+                  <option>Uniform Graph</option>
                 </select>
               </div>
 
@@ -265,7 +334,13 @@ const Configuration = ({ back }) => {
                   Crossover Rate
                   <HiOutlineInformationCircle className="info-icon" />
                 </label>
-                <input type="number" placeholder="0.80" />
+                <input type="number"
+                 value={crossoverRate}
+                 min={0}
+                 max={1}
+                 step={0.01}
+                 onChange={(e) => setCrossoverRate(Number(e.target.value))}
+                />
               </div>
 
               <div className="form-group">
@@ -273,9 +348,11 @@ const Configuration = ({ back }) => {
                   Mutation Type
                   <HiOutlineInformationCircle className="info-icon" />
                 </label>
-                <select>
-                  <option>Bit Flip</option>
-                  <option>Swap</option>
+                <select
+                  value={mutationType}
+                  onChange={(e) => setMutationType(e.target.value)}
+                >
+                  <option>Edge Flip</option>
                 </select>
               </div>
 
@@ -284,7 +361,13 @@ const Configuration = ({ back }) => {
                   Mutation Rate
                   <HiOutlineInformationCircle className="info-icon" />
                 </label>
-                <input type="number" placeholder="0.02" />
+                <input type="number" 
+                 value={mutationRate}
+                 min={0}
+                 max={1}
+                 step={0.01}
+                 onChange={(e) => setMutationRate(Number(e.target.value))}
+                />
               </div>
 
               <div className="form-group">
@@ -292,7 +375,11 @@ const Configuration = ({ back }) => {
                   Elite Count
                   <HiOutlineInformationCircle className="info-icon" />
                 </label>
-                <input type="number" placeholder="2" />
+                <input type="number" 
+                 value={eliteCount}
+                 min={0}
+                 onChange={(e) => setEliteCount(Number(e.target.value))}
+                />
               </div>
 
               <div className="form-group">
@@ -300,7 +387,11 @@ const Configuration = ({ back }) => {
                   Target Fitness
                   <HiOutlineInformationCircle className="info-icon" />
                 </label>
-                <input type="number" placeholder="100" />
+                <input type="number" 
+                 value={targetFitness}
+                 min={0}
+                 onChange={(e) => setTargetFitness(Number(e.target.value))}
+                />
               </div>
 
             </div>
@@ -421,7 +512,29 @@ const Configuration = ({ back }) => {
           Back
         </button>
 
-        <button className="run-btn">
+        <button
+    className="run-btn"
+    onClick={() =>
+        console.log({
+            nodeCount,
+            graphMode,
+            allowSelfLoop,
+            randomSeed,
+            connectivityBonus,
+            sparsityPenalty,
+            populationSize,
+            maxGenerations,
+            parentSelection,
+            tournamentSize,
+            crossoverType,
+            crossoverRate,
+            mutationType,
+            mutationRate,
+            eliteCount,
+            targetFitness,
+        })
+    }
+>
           <FaPlay />
           Run Experiment
         </button>
