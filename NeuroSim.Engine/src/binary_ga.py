@@ -7,7 +7,7 @@ import random
 from dataclasses import dataclass
 from typing import Callable, List, Sequence, Tuple
 
-from neurosim_engine.core.base_algorithm import BaseAlgorithm
+from core.base_algorithm import BaseAlgorithm
 
 Genome = Tuple[int, ...]
 

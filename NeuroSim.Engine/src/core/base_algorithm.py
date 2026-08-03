@@ -1,10 +1,10 @@
-# AUTH:DEVNEUROSIM:7A3F9E2B | NeuroSim.Engine/src/neurosim_engine/core/base_algorithm.py
+# AUTH:DEVNEUROSIM:7A3F9E2B | NeuroSim.Engine/src/core/base_algorithm.py
 """Abstract evolution cycle: initialize → evaluate → select → vary → replace."""
 
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Any, Callable, TypeVar
+from typing import Any, TypeVar
 
 P = TypeVar("P")  # population type
 I = TypeVar("I")  # individual / genome type
@@ -18,7 +18,7 @@ class BaseAlgorithm(ABC):
         *,
         population_size: int,
         max_generations: int,
-        rng: Any | None = None,
+        rng: Any | None = None, #random number generator
     ) -> None:
         self.population_size = population_size
         self.max_generations = max_generations
