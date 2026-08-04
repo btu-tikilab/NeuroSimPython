@@ -1,8 +1,7 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 from typing import List, Optional
-from neurosim_engine.bitga.engine import BitGAEngine
-from neurosim_engine.bitga.problems import OneMaxProblem, KnapsackProblem
+
 app = FastAPI(
     title="BitGA Engine API",
     version="1.0.0"

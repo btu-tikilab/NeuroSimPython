@@ -12,9 +12,9 @@ from .bitga.operators import (
     UniformCrossover,
     BitFlipMutation
 )
-from .bitga import (
+from neurosim_problems import (
     OneMaxProblem,
-    KnapsackProblem
+    KnapsackProblem,
 )
 
 __all__ = [
