@@ -1,13 +1,37 @@
-# AUTH:DEVNEUROSIM:7A3F9E2B | NeuroSim.Engine/src/neurosim_engine/__init__.py
 """
-NeuroSim.Engine (python) package root.
-
-Core: `BaseAlgorithm`, `BitstringGA` (generic bit GA).
-Samples under `NeuroSimPython/samples/poc/` import from here via `sys.path`.
+NeuroSim Engine Package
+Provides the existing generic BitstringGA implementation
+and the newer modular BitGA implementation.
 """
 
-from neurosim_engine.binary_ga import BitIndividual, BitstringGA
-from neurosim_engine.core.base_algorithm import BaseAlgorithm
+__version__ = "1.0.0"
 
-__all__ = ["BaseAlgorithm", "BitIndividual", "BitstringGA"]
+from .binary_ga import BitIndividual, BitstringGA
+from .core.base_algorithm import BaseAlgorithm
+
+from .bitga.engine import BitGAEngine
+from .bitga.operators import (
+    BitStringEncoding,
+    TournamentSelection,
+    UniformCrossover,
+    BitFlipMutation,
+)
+
+from neurosim_problems import (
+    OneMaxProblem,
+    KnapsackProblem,
+)
+
+__all__ = [
+    "BaseAlgorithm",
+    "BitIndividual",
+    "BitstringGA",
+    "BitGAEngine",
+    "BitStringEncoding",
+    "TournamentSelection",
+    "UniformCrossover",
+    "BitFlipMutation",
+    "OneMaxProblem",
+    "KnapsackProblem",
+]
 
