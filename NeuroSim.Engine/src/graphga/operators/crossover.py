@@ -7,10 +7,11 @@ Mirrors bitga/operators/crossover.py while operating on Graph genomes.
 
 from typing import Tuple
 
+from core.base_crossover import BaseCrossover
 from graphga.utils.graph import Graph
 
 
-class UniformGraphCrossover:
+class UniformGraphCrossover(BaseCrossover):
     """Uniform crossover for Graph genomes."""
 
     def __init__(self, crossover_probability: float = 0.5):

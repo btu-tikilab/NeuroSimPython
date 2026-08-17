@@ -6,7 +6,10 @@ Converts between problem representations and bitstrings
 
 from typing import List
 
-class BitStringEncoding:
+from core.base_encoding import BaseEncoding
+
+
+class BitStringEncoding(BaseEncoding):
     """Convert between problem data and bitstrings."""
     
     def __init__(self, length: int):

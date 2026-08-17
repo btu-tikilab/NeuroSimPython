@@ -3,11 +3,11 @@ Mutation Operators
 
 Introduce random variations into graph genomes.
 """
-
+from core.base_mutation import BaseMutation
 from graphga.utils.graph import Graph
 
 
-class EdgeMutation:
+class EdgeMutation(BaseMutation):
     """Randomly flip graph edges."""
 
     def __init__(

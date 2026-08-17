@@ -6,7 +6,10 @@ Combine genetic material from two parents to create offspring
 
 from typing import List, Tuple
 
-class UniformCrossover:
+from core.base_crossover import BaseCrossover
+
+
+class UniformCrossover(BaseCrossover):
     """Uniform crossover - each bit from either parent."""
     
     def __init__(self, crossover_probability: float = 0.5):

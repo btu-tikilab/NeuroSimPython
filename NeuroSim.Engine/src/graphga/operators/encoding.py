@@ -4,11 +4,11 @@ Graph Encoding/Decoding
 Converts between problem representations and Graph genomes.
 Mirrors bitga/operators/encoding.py.
 """
-
+from core.base_encoding import BaseEncoding
 from graphga.utils.graph import Graph, create_random_graph
 
 
-class GraphEncoding:
+class GraphEncoding(BaseEncoding):
     """Convert between problem data and Graph genomes."""
 
     def __init__(

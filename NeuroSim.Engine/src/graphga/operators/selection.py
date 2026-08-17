@@ -6,9 +6,11 @@ Mirrors bitga/operators/selection.py.
 """
 
 from typing import List
+
+from core.base_selection import BaseSelection
 from graphga.utils.graph import GraphIndividual
 
-class TournamentSelection:
+class TournamentSelection(BaseSelection):
     """Select individuals via tournament."""
 
     def __init__(self, tournament_size: int = 3):

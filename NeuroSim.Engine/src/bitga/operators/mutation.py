@@ -6,7 +6,10 @@ Introduce random variations to maintain population diversity
 
 from typing import List
 
-class BitFlipMutation:
+from core.base_mutation import BaseMutation
+
+
+class BitFlipMutation(BaseMutation):
     """Bit-flip mutation - randomly flip bits."""
     
     def __init__(self, mutation_rate: float = None, length: int = None):
