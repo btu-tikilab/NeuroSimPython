@@ -6,43 +6,17 @@ This document tracks pending improvements and completed tasks for the NeuroSim.U
 
 ## ✅ Completed
 
-- [x] Home page UI implementation
-- [x] Wiki page implementation
-- [x] Sidebar navigation
-- [x] Playground cards
-- [x] Git integration and push to `devs` branch
+-Graph Pathfinding Objective: Fully integrated BFS shortest-path fitness evaluations on the backend, 
+routed through a dynamic API config payload, and connected to the React UI run trigger.
+-Paradigm Wiki Integration: Configured sidebar redirects so GA, GP, ES, and EP load the Wiki component 
+pre-selected on their respective documentation tabs.
+-Playground Skeletons: Designed professional "Module in Development" landing screens for TSP and MazeNet 
+with detailed descriptions and "Back to Home" navigation.
+-Master Verification Script: Added the check_all.sh CLI test runner to automatically run the 21 verbose tests 
+and confirm repository compliance.
+-Redundant Skeletons Cleanup: Safely deleted old, unused placeholder page directories (GA, GP, ES, EP) to streamline 
+the UI project structure.
 
----
 
-## 🚧 Pending Tasks
-
-### 1. Replace Paradigm Cards with Dropdown
-**Priority:** High
-
-**Description**
-- Remove the paradigm cards from the Wiki overview.
-- Add a dropdown list for selecting an evolutionary paradigm.
-- Display the selected paradigm's description, workflow, applications, and operators dynamically.
-
----
-
-### 2. Convert Navigation to React Router
-
-**Description**
-- Replace the current state-based navigation (`activeItem`) with React Router.
-- Support URL-based navigation.
-- Enable browser back/forward navigation.
-- Improve scalability for future pages.
-
----
-
-### 3. Add Result Snapshots[✅ Completed]
-
-**Description**
-- Add screenshots or sample outputs for:
-  - GraphGA
-  - BitGA
-  - Future playgrounds
-- Display expected optimization results inside the Wiki documentation.
-
----
+## TO do's
+Integrate with BitGa and perform all system test run.
