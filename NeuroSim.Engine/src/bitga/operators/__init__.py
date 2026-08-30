@@ -1,3 +1,4 @@
+# AUTH:DEVNEUROSIM:7A3F9E2B | NeuroSim.Engine/src/bitga/operators/__init__.py
 # NeuroSim/Engine/bitga/operators/__init__.py
 
 from .encoding import BitStringEncoding

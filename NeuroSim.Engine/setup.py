@@ -1,3 +1,4 @@
+# AUTH:DEVNEUROSIM:7A3F9E2B | NeuroSim.Engine/setup.py
 from setuptools import setup, find_packages
 
 setup(

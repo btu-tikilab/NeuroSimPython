@@ -1,3 +1,4 @@
+# AUTH:DEVNEUROSIM:7A3F9E2B | NeuroSim.Engine/src/bitga/engine.py
 """
 Main BitGA Engine
 Implements the BaseAlgorithm lifecycle

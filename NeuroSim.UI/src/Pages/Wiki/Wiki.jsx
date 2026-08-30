@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./Wiki.css";
 
 import {
@@ -10,8 +10,12 @@ import {
   PLAYGROUND_GUIDES
 } from "./wikiMock";
 
-export default function Wiki({ onNavigate }) {
-  const [activeSection, setActiveSection] = useState("overview");
+export default function Wiki({ onNavigate, initialSection = "overview" }) {
+  const [activeSection, setActiveSection] = useState(initialSection);
+
+  useEffect(() => {
+    setActiveSection(initialSection);
+  }, [initialSection]);
 
   return (
     <main className="wiki">

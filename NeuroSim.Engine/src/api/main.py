@@ -1,0 +1,452 @@
+# AUTH:DEVNEUROSIM:7A3F9E2B | NeuroSim.Engine/src/api/main.py
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+from typing import List, Optional, Any
+import random
+
+from graphga.graph_ga import GraphGA
+from graphga.utils.graph import Graph, GraphIndividual
+
+app = FastAPI(
+    title="NeuroSim Engine API",
+    version="1.0.0"
+)
+
+# Enable CORS for React UI
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# ==================== GENERIC PLAYGROUND MODELS ====================
+
+class BitGARunRequest(BaseModel):
+    problem: str
+    bitstringLength: int
+    populationSize: int = 100
+    generations: int = 100
+    mutationRate: Optional[float] = None
+    tournamentSize: int = 3
+    seed: Optional[int] = 42
+
+class GenerationInHistory(BaseModel):
+    generation: int
+    bestFitness: float
+    avgFitness: float
+    worstFitness: float
+    bestGenome: List[int]
+
+class BitGARunResponse(BaseModel):
+    runId: str
+    bestFitness: float
+    bestSolution: List[int]
+    generationsToConvergence: int
+    totalGenerations: int
+    convergenceHistory: List[GenerationInHistory]
+    executionTimeSeconds: float
+
+# ==================== GRAPH GA MODELS & SCHEMAS ====================
+
+class RunConfig(BaseModel):
+    problem:           str   = "graph_onemax"
+    populationSize:    int   = 50
+    generations:       int   = 100
+    mutationRate:      float = 0.05
+    crossoverRate:     float = 0.8
+    seed:              int   = 42
+    nodeCount:         int   = 8
+    graphMode:         str   = "Directed"
+    allowSelfLoop:     bool  = False
+    parentSelection:   str   = "Tournament"
+    tournamentSize:    int   = 3
+    crossoverType:     str   = "One Point"
+    mutationType:      str   = "Bit Flip"
+    eliteCount:        int   = 2
+    targetFitness:     float = 100.0
+    connectivityBonus: float = 0.0
+    sparsityPenalty:   float = 0.0
+
+# Global storage for last GraphGA result
+_last_graph_result: Optional[Graph] = None
+_last_graph_history: List[dict] = []
+_last_graph_config: Optional[RunConfig] = None
+
+# ==================== GRAPH GA FITNESS & SUBCLASS ====================
+
+def graph_onemax_fitness(graph: Graph) -> float:
+    # 1. Base score: active node attributes
+    active_nodes = sum(graph.node_attributes)
+
+    # 2. Connectivity bonus (BFS from node 0)
+    node_count = graph.node_count
+    visited = [False] * node_count
+    if node_count > 0:
+        queue = [0]
+        visited[0] = True
+        head = 0
+        while head < len(queue):
+            curr = queue[head]
+            head += 1
+            for neighbor in range(node_count):
+                if graph.adjacency_matrix[curr][neighbor] == 1 and not visited[neighbor]:
+                    visited[neighbor] = True
+                    queue.append(neighbor)
+        is_connected = all(visited)
+    else:
+        is_connected = False
+
+    connectivity_bonus = 10.0 if is_connected else 0.0
+
+    # 3. Sparsity penalty
+    edges = 0
+    for i in range(node_count):
+        for j in range(node_count):
+            if graph.adjacency_matrix[i][j] == 1:
+                edges += 1
+
+    max_edges = node_count * node_count if graph.allow_self_loop else node_count * (node_count - 1)
+    if not graph.directed:
+        edges = edges // 2
+        max_edges = max_edges // 2
+
+    density = edges / max_edges if max_edges > 0 else 0.0
+    sparsity_penalty = 2.0 * density
+
+    return active_nodes + connectivity_bonus - sparsity_penalty
+
+
+def graph_pathfinding_fitness(graph: Graph) -> float:
+    node_count = graph.node_count
+    if node_count <= 1:
+        return 0.0
+
+    # BFS from node 0 to find shortest path to node N-1
+    visited = [False] * node_count
+    dist = [-1] * node_count
+    queue = [0]
+    visited[0] = True
+    dist[0] = 0
+    head = 0
+
+    while head < len(queue):
+        curr = queue[head]
+        head += 1
+        for neighbor in range(node_count):
+            if graph.adjacency_matrix[curr][neighbor] == 1 and not visited[neighbor]:
+                visited[neighbor] = True
+                dist[neighbor] = dist[curr] + 1
+                queue.append(neighbor)
+
+    shortest_path_len = dist[node_count - 1]
+
+    # Path reward logic (shorter path = higher bonus)
+    if shortest_path_len != -1:
+        path_bonus = 20.0 + (node_count - shortest_path_len) * 5.0
+    else:
+        path_bonus = 0.0
+
+    # Sparsity penalty
+    edges = 0
+    for i in range(node_count):
+        for j in range(node_count):
+            if graph.adjacency_matrix[i][j] == 1:
+                edges += 1
+
+    max_edges = node_count * node_count if graph.allow_self_loop else node_count * (node_count - 1)
+    if not graph.directed:
+        edges = edges // 2
+        max_edges = max_edges // 2
+
+    density = edges / max_edges if max_edges > 0 else 0.0
+    sparsity_penalty = 5.0 * density
+
+    active_nodes = sum(graph.node_attributes)
+
+    return active_nodes + path_bonus - sparsity_penalty
+
+
+class TrackedGraphGA(GraphGA):
+    def __init__(self, *args, **kwargs):
+        parent_selection = kwargs.pop("parent_selection", "Tournament")
+        crossover_type = kwargs.pop("crossover_type", "One Point")
+        mutation_type = kwargs.pop("mutation_type", "Bit Flip")
+        crossover_rate = kwargs.get("crossover_rate", 0.8)
+        
+        super().__init__(*args, **kwargs)
+        self.crossover_rate = crossover_rate
+
+        # 1. Selection Operator Mapping
+        from graphga.operators.selection import TournamentSelection, RouletteWheelSelection, RankSelection
+        if parent_selection == "Tournament":
+            self.selection = TournamentSelection(tournament_size=kwargs.get("tournament_size", 3))
+        elif parent_selection == "Roulette Wheel":
+            self.selection = RouletteWheelSelection()
+        elif parent_selection == "Rank":
+            self.selection = RankSelection()
+
+        # 2. Crossover Operator Mapping
+        from graphga.operators.crossover import (
+            OnePointCrossover, TwoPointCrossover, UniformCrossover, 
+            EdgeSwapCrossover, SubgraphSwapCrossover
+        )
+        if crossover_type == "One Point":
+            self.crossover = OnePointCrossover()
+        elif crossover_type == "Two Point":
+            self.crossover = TwoPointCrossover()
+        elif crossover_type == "Uniform":
+            self.crossover = UniformCrossover()
+        elif crossover_type == "Edge Swap":
+            self.crossover = EdgeSwapCrossover()
+        elif crossover_type == "Subgraph Swap":
+            self.crossover = SubgraphSwapCrossover()
+
+        # 3. Mutation Operator Mapping
+        from graphga.operators.mutation import (
+            EdgeFlipMutation, NodeAttrFlipMutation, SwapMutation, BitFlipMutation
+        )
+        m_rate = kwargs.get("mutation_rate")
+        if m_rate is None:
+            m_rate = 1.0 / kwargs.get("node_count", 8)
+            
+        if mutation_type == "Edge Flip":
+            self.mutation = EdgeFlipMutation(mutation_rate=m_rate)
+        elif mutation_type == "Node Attr Flip":
+            self.mutation = NodeAttrFlipMutation(mutation_rate=m_rate)
+        elif mutation_type == "Swap":
+            self.mutation = SwapMutation(mutation_rate=m_rate)
+        elif mutation_type == "Bit Flip":
+            self.mutation = BitFlipMutation(mutation_rate=m_rate)
+
+        self.history_log = []
+
+    def breed(self, parents: List[GraphIndividual]) -> List[GraphIndividual]:
+        offspring = []
+        while len(offspring) < self.population_size:
+            p1 = parents[self._rng.randrange(len(parents))]
+            p2 = parents[self._rng.randrange(len(parents))]
+            
+            # Apply crossover based on crossover_rate
+            if self._rng.random() < self.crossover_rate:
+                child1, child2 = self.crossover.crossover(p1.graph, p2.graph, self._rng)
+            else:
+                child1, child2 = p1.graph.copy(), p2.graph.copy()
+                
+            child1 = self.mutation.mutate(child1, self._rng)
+            child2 = self.mutation.mutate(child2, self._rng)
+            
+            offspring.append(GraphIndividual(graph=child1, fitness=0.0))
+            if len(offspring) < self.population_size:
+                offspring.append(GraphIndividual(graph=child2, fitness=0.0))
+        return offspring
+
+    def run(self) -> Any:
+        pop = self.initialize()
+        pop = self.evaluate(pop)
+
+        best_ind = self.best_solution(pop)
+        self.history_log.append({
+            "generation": 0,
+            "bestFitness": best_ind.fitness,
+            "avgFitness": sum(ind.fitness for ind in pop) / len(pop),
+            "worstFitness": min(ind.fitness for ind in pop)
+        })
+
+        gen = 0
+        while gen < self.max_generations and not self._should_stop():
+            parents = self.select(pop)
+            offspring = self.breed(parents)
+            offspring = self.evaluate(offspring)
+            pop = self.replace(pop, offspring)
+            gen += 1
+
+            best_ind = self.best_solution(pop)
+            self.history_log.append({
+                "generation": gen,
+                "bestFitness": best_ind.fitness,
+                "avgFitness": sum(ind.fitness for ind in pop) / len(pop),
+                "worstFitness": min(ind.fitness for ind in pop)
+            })
+
+        return self.best_solution(pop)
+
+
+def serialize_graph_to_cytoscape(graph: Graph) -> dict:
+    nodes = []
+    n = graph.node_count
+    for i in range(n):
+        node_type = "input" if i == 0 else "output" if i == n - 1 else "hidden"
+        nodes.append({
+            "id": f"n{i}",
+            "type": node_type,
+            "value": int(graph.node_attributes[i])
+        })
+
+    edges = []
+    for i in range(n):
+        for j in range(n):
+            if graph.adjacency_matrix[i][j] == 1:
+                if not graph.directed and j < i:
+                    continue
+                edges.append({
+                    "source": f"n{i}",
+                    "target": f"n{j}",
+                    "weight": 1.0
+                })
+    return {"nodes": nodes, "edges": edges}
+
+# ==================== ENDPOINTS ====================
+
+@app.get("/app-info")
+@app.get("/api/info")
+def get_app_info():
+    return {
+        "appName": "NeuroSim",
+        "version": "1.0.0"
+    }
+
+@app.get("/playgrounds")
+@app.get("/api/playgrounds")
+def get_playgrounds():
+    return {
+        "playgrounds": [
+            {
+                "id": "bitga",
+                "name": "BitGA",
+                "description": "Binary Genetic Algorithm Playground"
+            },
+            {
+                "id": "graphga",
+                "name": "GraphGA",
+                "description": "Graph Based Genetic Algorithm Playground"
+            }
+        ]
+    }
+
+@app.post("/api/graphga/run")
+def run_graphga(config: RunConfig):
+    global _last_graph_result, _last_graph_history, _last_graph_config
+
+    _last_graph_config = config
+    rng = random.Random(config.seed)
+
+    if config.problem == "graph_pathfinding":
+        fit_fn = graph_pathfinding_fitness
+    else:
+        fit_fn = graph_onemax_fitness
+
+    algo = TrackedGraphGA(
+        node_count=config.nodeCount,
+        fitness_fn=fit_fn,
+        population_size=config.populationSize,
+        max_generations=config.generations,
+        rng=rng,
+        directed=(config.graphMode == "Directed"),
+        allow_self_loop=config.allowSelfLoop,
+        tournament_size=config.tournamentSize,
+        crossover_rate=config.crossoverRate,
+        mutation_rate=config.mutationRate,
+        elitism=config.eliteCount,
+        parent_selection=config.parentSelection,
+        crossover_type=config.crossoverType,
+        mutation_type=config.mutationType
+    )
+
+    best_individual = algo.run()
+    _last_graph_result = best_individual.graph
+    _last_graph_history = algo.history_log
+
+    return {
+        "generation": len(_last_graph_history) - 1,
+        "bestFitness": best_individual.fitness,
+        "avgFitness": _last_graph_history[-1]["avgFitness"],
+        "worstFitness": _last_graph_history[-1]["worstFitness"],
+    }
+
+@app.get("/api/graphga/best")
+def get_graphga_best():
+    if _last_graph_result is None:
+        return {"nodes": [], "edges": [], "fitness": 0.0, "generation": 0}
+    return serialize_graph_to_cytoscape(_last_graph_result)
+
+@app.get("/api/graphga/history")
+def get_graphga_history():
+    return _last_graph_history
+
+@app.get("/api/graphga/snapshot/{generation}")
+def get_graphga_snapshot(generation: int):
+    if not _last_graph_history:
+        return {
+            "generation": generation,
+            "bestFitness": 0.0,
+            "avgFitness": 0.0,
+            "worstFitness": 0.0,
+            "bestGenome": {},
+        }
+    
+    entry = next(
+        (e for e in _last_graph_history if e["generation"] == generation),
+        None,
+    )
+    if entry is None:
+        entry = _last_graph_history[-1]
+
+    # Return serialized snapshot
+    snap_genome = serialize_graph_to_cytoscape(_last_graph_result) if _last_graph_result else {}
+    if snap_genome:
+        snap_genome["generation"] = generation
+
+    return {
+        "generation": generation,
+        "bestFitness": entry["bestFitness"],
+        "avgFitness": entry["avgFitness"],
+        "worstFitness": entry["worstFitness"],
+        "bestGenome": snap_genome,
+    }
+
+# ==================== BIT GA ENDPOINTS ====================
+
+@app.get("/bitga/problems")
+def get_bitga_problems():
+    return {
+        "problems": [
+            {
+                "id": "onemax",
+                "name": "OneMax",
+                "description": "Maximize number of 1s in bitstring"
+            },
+            {
+                "id": "knapsack",
+                "name": "0/1 Knapsack",
+                "description": "Maximize value while respecting weight"
+            }
+        ]
+    }
+
+@app.post("/bitga/run")
+def run_bitga(request: BitGARunRequest) -> BitGARunResponse:
+    return BitGARunResponse(
+        runId="run_placeholder_001",
+        bestFitness=15.0,
+        bestSolution=[1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0],
+        generationsToConvergence=25,
+        totalGenerations=100,
+        convergenceHistory=[
+            GenerationInHistory(
+                generation=i,
+                bestFitness=5.0 + (i * 0.1),
+                avgFitness=3.0 + (i * 0.05),
+                worstFitness=1.0 + (i * 0.02),
+                bestGenome=[1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0]
+            )
+            for i in range(100)
+        ],
+        executionTimeSeconds=2.34
+    )
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="127.0.0.1", port=8000)

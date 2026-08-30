@@ -1,3 +1,4 @@
+# AUTH:DEVNEUROSIM:7A3F9E2B | NeuroSim.Engine/src/bitga/operators/selection.py
 # NeuroSim/Engine/bitga/operators/selection.py
 """
 Selection Operators

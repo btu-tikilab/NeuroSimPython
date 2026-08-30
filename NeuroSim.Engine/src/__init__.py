@@ -1,3 +1,4 @@
+# AUTH:DEVNEUROSIM:7A3F9E2B | NeuroSim.Engine/src/__init__.py
 """
 NeuroSim Engine Package
 Provides the existing generic BitstringGA implementation

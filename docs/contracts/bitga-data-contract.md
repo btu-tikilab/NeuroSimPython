@@ -1,3 +1,4 @@
+<!-- AUTH:DEVNEUROSIM:7A3F9E2B | docs/contracts/bitga-data-contract.md -->
 # BitGA Data Contract
 
 This is the "agreement" between backend (Unit A) and frontend (Unit B).

@@ -1,3 +1,4 @@
+# AUTH:DEVNEUROSIM:7A3F9E2B | NeuroSim.Problems/src/neurosim_problems/knapsack.py
 # NeuroSim/Engine/bitga/problems/knapsack.py
 """
 0/1 Knapsack Problem

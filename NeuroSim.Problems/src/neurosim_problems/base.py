@@ -1,3 +1,4 @@
+# AUTH:DEVNEUROSIM:7A3F9E2B | NeuroSim.Problems/src/neurosim_problems/base.py
 # NeuroSim/Engine/bitga/problems/base.py
 """
 Base Problem Class

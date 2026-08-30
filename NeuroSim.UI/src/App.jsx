@@ -6,10 +6,6 @@ import BitGA from "./Pages/BitGA/BitGA";
 import GraphGA from "./Pages/GraphGA/GraphGA";
 import TSP from "./Pages/TSP/TSP";
 import MazeNet from "./Pages/MazeNet/MazeNet";
-import GA from "./Pages/GA/GA";
-import GP from "./Pages/GP/GP";
-import ES from "./Pages/ES/ES";
-import EP from "./Pages/EP/EP";
 import './App.css';
 
 export default function App() {
@@ -44,12 +40,12 @@ export default function App() {
 
       {activeItem === "BitGA" && <BitGA />}
       {activeItem === "GraphGA" && <GraphGA />}
-      {activeItem === "TSP" && <TSP />}
-      {activeItem === "MazeNet" && <MazeNet />}
-      {activeItem === "GA" && <GA />}
-      {activeItem === "GP" && <GP />}
-      {activeItem === "ES" && <ES />}
-      {activeItem === "EP" && <EP />}
+      {activeItem === "TSP" && <TSP onNavigate={setActiveItem} />}
+      {activeItem === "MazeNet" && <MazeNet onNavigate={setActiveItem} />}
+      {activeItem === "GA" && <Wiki onNavigate={setActiveItem} initialSection="ga" />}
+      {activeItem === "GP" && <Wiki onNavigate={setActiveItem} initialSection="gp" />}
+      {activeItem === "ES" && <Wiki onNavigate={setActiveItem} initialSection="es" />}
+      {activeItem === "EP" && <Wiki onNavigate={setActiveItem} initialSection="ep" />}
     </div>
   );
 }
