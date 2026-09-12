@@ -1,4 +1,5 @@
 import React from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import "./Sidebar.css";
 
 import {
@@ -21,10 +22,12 @@ import { SlGraph } from "react-icons/sl";
 const navItems = [
   {
     label: "Home",
+    path: "/",
     icon: <FaHome />,
   },
   {
     label: "Wiki",
+    path: "/wiki",
     icon: <FaBookOpen />,
   },
 ];
@@ -32,18 +35,22 @@ const navItems = [
 const playgrounds = [
   {
     label: "BitGA",
+    path: "/bitga",
     icon: <FaSquareBinary />,
   },
   {
     label: "GraphGA",
+    path: "/graphga",
     icon: <FaProjectDiagram />,
   },
   {
     label: "TSP",
+    path: "/tsp",
     icon: <FaRoute />,
   },
   {
     label: "MazeNet",
+    path: "/maznet",
     icon: <GiMaze />,
   },
 ];
@@ -51,30 +58,61 @@ const playgrounds = [
 const paradigms = [
   {
     label: "GA",
+    path: "/ga",
     icon: <FaDna />,
   },
   {
     label: "GP",
+    path: "/gp",
     icon: <FaCodeBranch />,
   },
   {
     label: "ES",
+    path: "/es",
     icon: <SlGraph />,
   },
   {
     label: "EP",
+    path: "/ep",
     icon: <GiDiceTarget />,
   },
 ];
 
 export default function Sidebar({
-  activeItem,
-  onNavigate,
   theme,
   setTheme,
   collapsed,
   setCollapsed,
 }) {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const isActive = (path) => {
+    if (path === "/") {
+      return location.pathname === "/";
+    }
+
+    return location.pathname === path;
+  };
+
+  const renderItem = (item) => (
+    <button
+      key={item.label}
+      className={`sidebar__nav-item ${
+        isActive(item.path)
+          ? "sidebar__nav-item--active"
+          : ""
+      }`}
+      onClick={() => navigate(item.path)}
+    >
+      <span className="sidebar__nav-icon">
+        {item.icon}
+      </span>
+
+      {!collapsed && item.label}
+    </button>
+  );
+
   return (
     <aside className={`sidebar ${collapsed ? "collapsed" : ""}`}>
       {/* ---------- Logo ---------- */}
@@ -82,10 +120,8 @@ export default function Sidebar({
       <div
         className="sidebar_logo"
         onClick={() => {
-  console.log("Clicked");
-  console.log("Before:", collapsed);
-  setCollapsed(!collapsed);
-}}
+          setCollapsed(!collapsed);
+        }}
       >
         <div className="sidebar_icon">
           <FaBrain className="brain-icon" />
@@ -94,7 +130,9 @@ export default function Sidebar({
         {!collapsed && (
           <div className="sidebar__logo-text">
             <strong>NeuroSim</strong>
-            <span>Evolutionary Computation Framework</span>
+            <span>
+              Evolutionary Computation Framework
+            </span>
           </div>
         )}
       </div>
@@ -104,23 +142,7 @@ export default function Sidebar({
       {/* ---------- Navigation ---------- */}
 
       <nav className="sidebar__nav">
-        {navItems.map((item) => (
-          <button
-            key={item.label}
-            className={`sidebar__nav-item ${
-              activeItem === item.label
-                ? "sidebar__nav-item--active"
-                : ""
-            }`}
-            onClick={() => onNavigate(item.label)}
-          >
-            <span className="sidebar__nav-icon">
-              {item.icon}
-            </span>
-
-            {!collapsed && item.label}
-          </button>
-        ))}
+        {navItems.map(renderItem)}
 
         <div className="sidebar__divider" />
 
@@ -130,23 +152,7 @@ export default function Sidebar({
           </p>
         )}
 
-        {playgrounds.map((item) => (
-          <button
-            key={item.label}
-            className={`sidebar__nav-item ${
-              activeItem === item.label
-                ? "sidebar__nav-item--active"
-                : ""
-            }`}
-            onClick={() => onNavigate(item.label)}
-          >
-            <span className="sidebar__nav-icon">
-              {item.icon}
-            </span>
-
-            {!collapsed && item.label}
-          </button>
-        ))}
+        {playgrounds.map(renderItem)}
 
         <div className="sidebar__divider" />
 
@@ -156,23 +162,7 @@ export default function Sidebar({
           </p>
         )}
 
-        {paradigms.map((item) => (
-          <button
-            key={item.label}
-            className={`sidebar__nav-item ${
-              activeItem === item.label
-                ? "sidebar__nav-item--active"
-                : ""
-            }`}
-            onClick={() => onNavigate(item.label)}
-          >
-            <span className="sidebar__nav-icon">
-              {item.icon}
-            </span>
-
-            {!collapsed && item.label}
-          </button>
-        ))}
+        {paradigms.map(renderItem)}
       </nav>
 
       {/* ---------- Footer ---------- */}
@@ -188,7 +178,11 @@ export default function Sidebar({
         <button
           className="sidebar__theme-btn"
           onClick={() =>
-            setTheme(theme === "dark" ? "light" : "dark")
+            setTheme(
+              theme === "dark"
+                ? "light"
+                : "dark"
+            )
           }
         >
           {theme === "dark" ? (

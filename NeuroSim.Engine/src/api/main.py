@@ -1,3 +1,4 @@
+
 # AUTH:DEVNEUROSIM:7A3F9E2B | NeuroSim.Engine/src/api/main.py
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -57,7 +58,7 @@ class RunConfig(BaseModel):
     generations:       int   = 100
     mutationRate:      float = 0.05
     crossoverRate:     float = 0.8
-    seed:              int   = 42
+    randomSeed:        int   = 42
     nodeCount:         int   = 8
     graphMode:         str   = "Directed"
     allowSelfLoop:     bool  = False
@@ -77,7 +78,11 @@ _last_graph_config: Optional[RunConfig] = None
 
 # ==================== GRAPH GA FITNESS & SUBCLASS ====================
 
-def graph_onemax_fitness(graph: Graph) -> float:
+def graph_onemax_fitness(
+        graph: Graph,
+        connectivity_bonus_value: float=10.0,
+        sparsity_penalty_value: float=2.0,
+        ) -> float:
     # 1. Base score: active node attributes
     active_nodes = sum(graph.node_attributes)
 
@@ -99,7 +104,7 @@ def graph_onemax_fitness(graph: Graph) -> float:
     else:
         is_connected = False
 
-    connectivity_bonus = 10.0 if is_connected else 0.0
+    connectivity_bonus = connectivity_bonus_value if is_connected else 0.0
 
     # 3. Sparsity penalty
     edges = 0
@@ -114,7 +119,7 @@ def graph_onemax_fitness(graph: Graph) -> float:
         max_edges = max_edges // 2
 
     density = edges / max_edges if max_edges > 0 else 0.0
-    sparsity_penalty = 2.0 * density
+    sparsity_penalty = sparsity_penalty_value * density
 
     return active_nodes + connectivity_bonus - sparsity_penalty
 
@@ -331,12 +336,12 @@ def run_graphga(config: RunConfig):
     global _last_graph_result, _last_graph_history, _last_graph_config
 
     _last_graph_config = config
-    rng = random.Random(config.seed)
+    rng = random.Random(config.randomSeed)
 
     if config.problem == "graph_pathfinding":
         fit_fn = graph_pathfinding_fitness
     else:
-        fit_fn = graph_onemax_fitness
+        fit_fn = lambda graph: graph_onemax_fitness(graph, connectivity_bonus_value=config.connectivityBonus, sparsity_penalty_value=config.sparsityPenalty)
 
     algo = TrackedGraphGA(
         node_count=config.nodeCount,

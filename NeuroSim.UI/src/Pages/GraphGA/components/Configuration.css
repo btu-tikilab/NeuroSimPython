@@ -498,3 +498,35 @@
 .app-layout--light .graph-preview{
     border:2px dashed #d1d5db;
 }
+.info-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.info-icon {
+  margin-left: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  vertical-align: middle;
+}
+
+.info-icon:hover {
+  transform: scale(1.1);
+}
+
+.info-tooltip {
+  position: absolute;
+  left: 24px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 280px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: #1f2937;
+  color: #ffffff;
+  font-size: 13px;
+  line-height: 1.5;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}

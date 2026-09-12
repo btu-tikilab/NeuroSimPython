@@ -37,6 +37,23 @@ const Configuration = ({ selectedParadigm, selectedProblem, back, onRun }) => {
   const [mutationRate, setMutationRate] = useState(0.02);
   const [eliteCount, setEliteCount] = useState(2);
   const [targetFitness, setTargetFitness] = useState(100);
+  const [activeInfo, setActiveInfo] = useState(null);
+  const showInfo = (name, text) => (
+  <span className="info-wrapper">
+    <HiOutlineInformationCircle
+      className="info-icon"
+      onClick={() =>
+        setActiveInfo(activeInfo === name ? null : name)
+      }
+    />
+
+    {activeInfo === name && (
+      <div className="info-tooltip">
+        {text}
+      </div>
+    )}
+  </span>
+);
 
   return (
     <div className="configuration-page">
@@ -102,19 +119,21 @@ const Configuration = ({ selectedParadigm, selectedProblem, back, onRun }) => {
               <div className="form-group">
                 <label>
                   Node Count
-                  <HiOutlineInformationCircle className="info-icon" />
+                  {showInfo("nodeCount","Number of nodes in the graph. The maximum is 100 because increasing the number of nodes greatly increases the number of possible connections and makes the genetic search more computationally expensive.")}
                 </label>
                 <input
                   type="number"
+                  min="1"
+                  max="100"
                   value={nodeCount}
-                  onChange={(e) => setNodeCount(Number(e.target.value))}
+                  onChange={(e) => setNodeCount(Math.min(100, Math.max(1, Number(e.target.value))))}
                 />
               </div>
 
               <div className="form-group">
                 <label>
                   Graph Mode
-                  <HiOutlineInformationCircle className="info-icon" />
+                  {showInfo("graphMode","Select whether the graph is directed or undirected. In a directed graph, edges have a direction, while in an undirected graph, edges do not have a direction.")}
                 </label>
                 <select
                   value={graphMode}
@@ -128,7 +147,7 @@ const Configuration = ({ selectedParadigm, selectedProblem, back, onRun }) => {
               <div className="form-group">
                 <label>
                   Allow Self Loop
-                  <HiOutlineInformationCircle className="info-icon" />
+                  {showInfo("allowSelfLoop","Determines whether self-loops are allowed in the graph.")}
                 </label>
                 <div className="toggle-container">
                   <label className="switch">
@@ -148,12 +167,13 @@ const Configuration = ({ selectedParadigm, selectedProblem, back, onRun }) => {
               <div className="form-group">
                 <label>
                   Random Seed
-                  <HiOutlineInformationCircle className="info-icon" />
+                  {showInfo("randomSeed","Seed for the random number generator. Setting this to a specific value ensures reproducible results.")}
                 </label>
                 <input
                   type="number"
+                  min="0"
                   value={randomSeed}
-                  onChange={(e) => setRandomSeed(Number(e.target.value))}
+                  onChange={(e) => setRandomSeed(Math.max(0, Number(e.target.value)))}
                 />
               </div>
             </div>
@@ -168,20 +188,30 @@ const Configuration = ({ selectedParadigm, selectedProblem, back, onRun }) => {
 
             <div className="config-grid">
               <div className="form-group">
-                <label>Connectivity Bonus</label>
+                <label>Connectivity Bonus
+                  {showInfo("connectivityBonus","A bonus score added to the fitness of individuals based on their connectivity. Higher values encourage more connected graphs.")}
+                </label>
                 <input 
                   type="number" 
+                  min="0"
+                  max="100"
+                  step="1"
                   value={connectivityBonus} 
-                  onChange={(e) => setConnectivityBonus(Number(e.target.value))}
+                  onChange={(e) => setConnectivityBonus(Math.min(100, Math.max(0, Number(e.target.value))))}
                 />
               </div>
 
               <div className="form-group">
-                <label>Sparsity Penalty</label>
+                <label>Sparsity Penalty
+                  {showInfo("sparsityPenalty","A penalty score subtracted from the fitness of individuals based on their sparsity. Higher values encourage denser graphs.")}
+                </label>
                 <input 
                   type="number" 
+                  min="0"
+                  max="100"
+                  step="1"
                   value={sparsityPenalty} 
-                  onChange={(e) => setSparsityPenalty(Number(e.target.value))}
+                  onChange={(e) => setSparsityPenalty(Math.min(100, Math.max(0, Number(e.target.value))))}  
                 />
               </div>
             </div>
@@ -198,24 +228,24 @@ const Configuration = ({ selectedParadigm, selectedProblem, back, onRun }) => {
               <div className="form-group">
                 <label>
                   Population Size
-                  <HiOutlineInformationCircle className="info-icon" />
+                  {showInfo("populationSize","The number of individuals in each generation.")}
                 </label>
                 <input 
                   type="number" 
                   value={populationSize} 
-                  onChange={(e) => setPopulationSize(Number(e.target.value))}
+                  onChange={(e) => setPopulationSize(Math.max(2, Number(e.target.value)))}
                 />
               </div>
 
               <div className="form-group">
                 <label>
                   Max Generations
-                  <HiOutlineInformationCircle className="info-icon" />
+                  {showInfo("generations","The maximum number of generations to run the genetic algorithm.")}
                 </label>
                 <input 
                   type="number" 
                   value={generations} 
-                  onChange={(e) => setGenerations(Number(e.target.value))}
+                  onChange={(e) => setGenerations(Math.max(1, Number(e.target.value)))}
                 />
               </div>
 
@@ -234,22 +264,25 @@ const Configuration = ({ selectedParadigm, selectedProblem, back, onRun }) => {
                 </select>
               </div>
 
-              <div className="form-group">
-                <label>
-                  Tournament Size
-                  <HiOutlineInformationCircle className="info-icon" />
-                </label>
+              {parentSelection === "Tournament" && (
+                <div className="form-group">
+                  <label>
+                    Tournament Size
+                    {showInfo("tournamentSize","Number of individuals competing in each tournament selection. Must be less than or equal to the population size.")}
+                  </label>
                 <input 
                   type="number" 
+                  min="1"
                   value={tournamentSize} 
-                  onChange={(e) => setTournamentSize(Number(e.target.value))}
+                  onChange={(e) => setTournamentSize(Math.min(populationSize, Math.max(1, Number(e.target.value))))}
                 />
               </div>
+              )}
 
               <div className="form-group">
                 <label>
                   Crossover Type
-                  <HiOutlineInformationCircle className="info-icon" />
+                  {showInfo("crossoverType","The type of crossover operation to use for generating offspring.")}
                 </label>
                 <select 
                   value={crossoverType} 
@@ -266,20 +299,22 @@ const Configuration = ({ selectedParadigm, selectedProblem, back, onRun }) => {
               <div className="form-group">
                 <label>
                   Crossover Rate
-                  <HiOutlineInformationCircle className="info-icon" />
+                  {showInfo("crossoverRate","The probability of performing crossover between two parent individuals.")}
                 </label>
                 <input 
                   type="number" 
+                  min="0"
+                  max="1"
                   step="0.05"
                   value={crossoverRate} 
-                  onChange={(e) => setCrossoverRate(Number(e.target.value))}
+                  onChange={(e) => setCrossoverRate(Math.min(1, Math.max(0, Number(e.target.value))))}
                 />
               </div>
 
               <div className="form-group">
                 <label>
                   Mutation Type
-                  <HiOutlineInformationCircle className="info-icon" />
+                  {showInfo("mutationType","The type of mutation operation to use for generating offspring.")}
                 </label>
                 <select 
                   value={mutationType} 
@@ -295,37 +330,42 @@ const Configuration = ({ selectedParadigm, selectedProblem, back, onRun }) => {
               <div className="form-group">
                 <label>
                   Mutation Rate
-                  <HiOutlineInformationCircle className="info-icon" />
+                  {showInfo("mutationRate","The probability of performing mutation on an individual.")}
                 </label>
                 <input 
                   type="number" 
+                  min="0"
+                  max="1"
                   step="0.01"
                   value={mutationRate} 
-                  onChange={(e) => setMutationRate(Number(e.target.value))}
+                  onChange={(e) => setMutationRate(Math.min(1, Math.max(0, Number(e.target.value))))}
                 />
               </div>
 
               <div className="form-group">
                 <label>
                   Elite Count
-                  <HiOutlineInformationCircle className="info-icon" />
+                  {showInfo("eliteCount","The number of top-performing individuals to carry over to the next generation.")}
                 </label>
                 <input 
                   type="number" 
+                  min="0"
+                  max={populationSize}
                   value={eliteCount} 
-                  onChange={(e) => setEliteCount(Number(e.target.value))}
+                  onChange={(e) => setEliteCount(Math.min(populationSize, Math.max(0, Number(e.target.value))))}
                 />
               </div>
 
               <div className="form-group">
                 <label>
                   Target Fitness
-                  <HiOutlineInformationCircle className="info-icon" />
+                  {showInfo("targetFitness","The desired fitness level that the genetic algorithm aims to achieve.")}
                 </label>
                 <input 
                   type="number" 
+                  min="0"
                   value={targetFitness} 
-                  onChange={(e) => setTargetFitness(Number(e.target.value))}
+                  onChange={(e) => setTargetFitness(Math.max(0, Number(e.target.value)))}
                 />
               </div>
             </div>
@@ -436,7 +476,7 @@ const Configuration = ({ selectedParadigm, selectedProblem, back, onRun }) => {
               generations,
               mutationRate,
               crossoverRate,
-              seed: randomSeed,
+              randomSeed: randomSeed,
               nodeCount,
               graphMode,
               allowSelfLoop,
