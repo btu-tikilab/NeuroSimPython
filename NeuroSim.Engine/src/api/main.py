@@ -24,6 +24,7 @@ app.add_middleware(
 )
 
 # ==================== GENERIC PLAYGROUND MODELS ====================
+#bitga
 
 class BitGARunRequest(BaseModel):
     problem: str
@@ -51,7 +52,8 @@ class BitGARunResponse(BaseModel):
     executionTimeSeconds: float
 
 # ==================== GRAPH GA MODELS & SCHEMAS ====================
-
+#graphga
+#backend default values
 class RunConfig(BaseModel):
     problem:           str   = "graph_onemax"
     populationSize:    int   = 50
@@ -114,9 +116,19 @@ def graph_onemax_fitness(
                 edges += 1
 
     max_edges = node_count * node_count if graph.allow_self_loop else node_count * (node_count - 1)
-    if not graph.directed:
-        edges = edges // 2
-        max_edges = max_edges // 2
+    if graph.directed:
+        max_edges=(node_count* node_count
+                   if graph.allow_self_loop
+                   else node_count*(node_count - 1 ))
+    else:
+        max_edges=node_count*(node_count - 1) // 2 
+        if graph.allow_self_loop:
+            max_edges+=node_count
+        edges=0
+        for i in range(node_count):
+            for j in range(i, node_count):
+                if graph.adjacency_matrix[i][j] == 1:
+                    edges += 1
 
     density = edges / max_edges if max_edges > 0 else 0.0
     sparsity_penalty = sparsity_penalty_value * density
@@ -161,10 +173,19 @@ def graph_pathfinding_fitness(graph: Graph) -> float:
             if graph.adjacency_matrix[i][j] == 1:
                 edges += 1
 
-    max_edges = node_count * node_count if graph.allow_self_loop else node_count * (node_count - 1)
-    if not graph.directed:
-        edges = edges // 2
-        max_edges = max_edges // 2
+    if graph.directed:
+        max_edges=(node_count * node_count if graph.allow_self_loop else node_count * (node_count - 1)
+        )
+    else:
+        max_edges=node_count*(node_count - 1) // 2 
+        if graph.allow_self_loop:
+            max_edges+=node_count
+        edges=0
+        for i in range(node_count):
+            for j in range(i, node_count):
+                if graph.adjacency_matrix[i][j] == 1:
+                    edges += 1
+
 
     density = edges / max_edges if max_edges > 0 else 0.0
     sparsity_penalty = 5.0 * density
@@ -180,9 +201,11 @@ class TrackedGraphGA(GraphGA):
         crossover_type = kwargs.pop("crossover_type", "One Point")
         mutation_type = kwargs.pop("mutation_type", "Bit Flip")
         crossover_rate = kwargs.get("crossover_rate", 0.8)
+        target_fitness = kwargs.pop("target_fitness", None)
         
         super().__init__(*args, **kwargs)
         self.crossover_rate = crossover_rate
+        self.target_fitness = target_fitness
 
         # 1. Selection Operator Mapping
         from graphga.operators.selection import TournamentSelection, RouletteWheelSelection, RankSelection
@@ -257,11 +280,12 @@ class TrackedGraphGA(GraphGA):
             "generation": 0,
             "bestFitness": best_ind.fitness,
             "avgFitness": sum(ind.fitness for ind in pop) / len(pop),
-            "worstFitness": min(ind.fitness for ind in pop)
+            "worstFitness": min(ind.fitness for ind in pop),
+            "bestGraph": best_ind.graph.copy(),
         })
 
         gen = 0
-        while gen < self.max_generations and not self._should_stop():
+        while gen < self.max_generations:
             parents = self.select(pop)
             offspring = self.breed(parents)
             offspring = self.evaluate(offspring)
@@ -269,12 +293,16 @@ class TrackedGraphGA(GraphGA):
             gen += 1
 
             best_ind = self.best_solution(pop)
+            
             self.history_log.append({
                 "generation": gen,
                 "bestFitness": best_ind.fitness,
                 "avgFitness": sum(ind.fitness for ind in pop) / len(pop),
-                "worstFitness": min(ind.fitness for ind in pop)
+                "worstFitness": min(ind.fitness for ind in pop),
+                "bestGraph": best_ind.graph.copy(),
             })
+            if self.target_fitness is not None and best_ind.fitness>=self.target_fitness:
+                break
 
         return self.best_solution(pop)
 
@@ -357,7 +385,8 @@ def run_graphga(config: RunConfig):
         elitism=config.eliteCount,
         parent_selection=config.parentSelection,
         crossover_type=config.crossoverType,
-        mutation_type=config.mutationType
+        mutation_type=config.mutationType,
+        target_fitness=config.targetFitness
     )
 
     best_individual = algo.run()
@@ -400,9 +429,9 @@ def get_graphga_snapshot(generation: int):
         entry = _last_graph_history[-1]
 
     # Return serialized snapshot
-    snap_genome = serialize_graph_to_cytoscape(_last_graph_result) if _last_graph_result else {}
+    snap_genome = serialize_graph_to_cytoscape(entry["bestGraph"]) if entry.get("bestGraph") else{}
     if snap_genome:
-        snap_genome["generation"] = generation
+        snap_genome["generation"] = entry["generation"]
 
     return {
         "generation": generation,

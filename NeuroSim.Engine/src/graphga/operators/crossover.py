@@ -233,6 +233,8 @@ class TwoPointCrossover(BaseCrossover):
         flat2 = _flatten_graph(parent2)
 
         length = len(flat1)
+        if length < 3:
+            return parent1.copy(),parent2.copy()
         p1 = rng.randint(1, length - 2)
         p2 = rng.randint(p1 + 1, length - 1)
 

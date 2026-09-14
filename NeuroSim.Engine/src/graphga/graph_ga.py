@@ -191,20 +191,30 @@ class GraphGA(BaseAlgorithm):
         self,
         population: List[GraphIndividual],
         offspring: List[GraphIndividual],
-    ) -> List[GraphIndividual]:
+        ) -> List[GraphIndividual]:
         """
-        Replace the current population with the best individuals
-        from the combined population and offspring.
+        Replace the current population using elitism.
+
+        The best `self.elitism` individuals from the current
+        population are preserved directly. The remaining slots
+        are filled with evaluated offspring.
         """
 
-        combined = population + offspring
-
-        combined.sort(
+        population.sort(
             key=lambda individual: individual.fitness,
             reverse=True,
         )
 
-        return combined[: self.population_size]
+        elite_count = min(
+            self.elitism,
+            self.population_size,
+        )
+
+        elites = population[:elite_count]
+
+        remaining = self.population_size - elite_count
+
+        return elites + offspring[:remaining]
     
     def best_solution(
         self,
