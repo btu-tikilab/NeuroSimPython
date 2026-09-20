@@ -1,4 +1,3 @@
-
 # AUTH:DEVNEUROSIM:7A3F9E2B | NeuroSim.Engine/src/api/main.py
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -24,7 +23,6 @@ app.add_middleware(
 )
 
 # ==================== GENERIC PLAYGROUND MODELS ====================
-#bitga
 
 class BitGARunRequest(BaseModel):
     problem: str
@@ -52,15 +50,14 @@ class BitGARunResponse(BaseModel):
     executionTimeSeconds: float
 
 # ==================== GRAPH GA MODELS & SCHEMAS ====================
-#graphga
-#backend default values
+
 class RunConfig(BaseModel):
     problem:           str   = "graph_onemax"
     populationSize:    int   = 50
     generations:       int   = 100
     mutationRate:      float = 0.05
     crossoverRate:     float = 0.8
-    randomSeed:        int   = 42
+    seed:              int   = 42
     nodeCount:         int   = 8
     graphMode:         str   = "Directed"
     allowSelfLoop:     bool  = False
@@ -80,11 +77,7 @@ _last_graph_config: Optional[RunConfig] = None
 
 # ==================== GRAPH GA FITNESS & SUBCLASS ====================
 
-def graph_onemax_fitness(
-        graph: Graph,
-        connectivity_bonus_value: float=10.0,
-        sparsity_penalty_value: float=2.0,
-        ) -> float:
+def graph_onemax_fitness(graph: Graph, conn_bonus: float = 10.0, spars_penalty: float = 2.0) -> float:
     # 1. Base score: active node attributes
     active_nodes = sum(graph.node_attributes)
 
@@ -106,7 +99,7 @@ def graph_onemax_fitness(
     else:
         is_connected = False
 
-    connectivity_bonus = connectivity_bonus_value if is_connected else 0.0
+    connectivity_bonus = conn_bonus if is_connected else 0.0
 
     # 3. Sparsity penalty
     edges = 0
@@ -115,28 +108,25 @@ def graph_onemax_fitness(
             if graph.adjacency_matrix[i][j] == 1:
                 edges += 1
 
-    max_edges = node_count * node_count if graph.allow_self_loop else node_count * (node_count - 1)
     if graph.directed:
-        max_edges=(node_count* node_count
-                   if graph.allow_self_loop
-                   else node_count*(node_count - 1 ))
+        max_edges = node_count * node_count if graph.allow_self_loop else node_count * (node_count - 1)
     else:
-        max_edges=node_count*(node_count - 1) // 2 
+        max_edges = node_count * (node_count - 1) // 2 
         if graph.allow_self_loop:
-            max_edges+=node_count
-        edges=0
+            max_edges += node_count
+        edges = 0
         for i in range(node_count):
             for j in range(i, node_count):
                 if graph.adjacency_matrix[i][j] == 1:
                     edges += 1
 
     density = edges / max_edges if max_edges > 0 else 0.0
-    sparsity_penalty = sparsity_penalty_value * density
+    sparsity_penalty = spars_penalty * density
 
     return active_nodes + connectivity_bonus - sparsity_penalty
 
 
-def graph_pathfinding_fitness(graph: Graph) -> float:
+def graph_pathfinding_fitness(graph: Graph, spars_penalty: float = 5.0) -> float:
     node_count = graph.node_count
     if node_count <= 1:
         return 0.0
@@ -174,21 +164,19 @@ def graph_pathfinding_fitness(graph: Graph) -> float:
                 edges += 1
 
     if graph.directed:
-        max_edges=(node_count * node_count if graph.allow_self_loop else node_count * (node_count - 1)
-        )
+        max_edges = node_count * node_count if graph.allow_self_loop else node_count * (node_count - 1)
     else:
-        max_edges=node_count*(node_count - 1) // 2 
+        max_edges = node_count * (node_count - 1) // 2 
         if graph.allow_self_loop:
-            max_edges+=node_count
-        edges=0
+            max_edges += node_count
+        edges = 0
         for i in range(node_count):
             for j in range(i, node_count):
                 if graph.adjacency_matrix[i][j] == 1:
                     edges += 1
 
-
     density = edges / max_edges if max_edges > 0 else 0.0
-    sparsity_penalty = 5.0 * density
+    sparsity_penalty = spars_penalty * density
 
     active_nodes = sum(graph.node_attributes)
 
@@ -201,11 +189,10 @@ class TrackedGraphGA(GraphGA):
         crossover_type = kwargs.pop("crossover_type", "One Point")
         mutation_type = kwargs.pop("mutation_type", "Bit Flip")
         crossover_rate = kwargs.get("crossover_rate", 0.8)
-        target_fitness = kwargs.pop("target_fitness", None)
+        self.target_fitness = kwargs.pop("target_fitness", None)
         
         super().__init__(*args, **kwargs)
         self.crossover_rate = crossover_rate
-        self.target_fitness = target_fitness
 
         # 1. Selection Operator Mapping
         from graphga.operators.selection import TournamentSelection, RouletteWheelSelection, RankSelection
@@ -251,6 +238,13 @@ class TrackedGraphGA(GraphGA):
 
         self.history_log = []
 
+    def _should_stop(self) -> bool:
+        if self.target_fitness is not None and self.history_log:
+            best_so_far = self.history_log[-1]["bestFitness"]
+            if best_so_far >= self.target_fitness:
+                return True
+        return False
+
     def breed(self, parents: List[GraphIndividual]) -> List[GraphIndividual]:
         offspring = []
         while len(offspring) < self.population_size:
@@ -281,11 +275,11 @@ class TrackedGraphGA(GraphGA):
             "bestFitness": best_ind.fitness,
             "avgFitness": sum(ind.fitness for ind in pop) / len(pop),
             "worstFitness": min(ind.fitness for ind in pop),
-            "bestGraph": best_ind.graph.copy(),
+            "bestGraph": best_ind.graph.copy()
         })
 
         gen = 0
-        while gen < self.max_generations:
+        while gen < self.max_generations and not self._should_stop():
             parents = self.select(pop)
             offspring = self.breed(parents)
             offspring = self.evaluate(offspring)
@@ -293,16 +287,13 @@ class TrackedGraphGA(GraphGA):
             gen += 1
 
             best_ind = self.best_solution(pop)
-            
             self.history_log.append({
                 "generation": gen,
                 "bestFitness": best_ind.fitness,
                 "avgFitness": sum(ind.fitness for ind in pop) / len(pop),
                 "worstFitness": min(ind.fitness for ind in pop),
-                "bestGraph": best_ind.graph.copy(),
+                "bestGraph": best_ind.graph.copy()
             })
-            if self.target_fitness is not None and best_ind.fitness>=self.target_fitness:
-                break
 
         return self.best_solution(pop)
 
@@ -364,12 +355,12 @@ def run_graphga(config: RunConfig):
     global _last_graph_result, _last_graph_history, _last_graph_config
 
     _last_graph_config = config
-    rng = random.Random(config.randomSeed)
+    rng = random.Random(config.seed)
 
     if config.problem == "graph_pathfinding":
-        fit_fn = graph_pathfinding_fitness
+        fit_fn = lambda g: graph_pathfinding_fitness(g, spars_penalty=config.sparsityPenalty)
     else:
-        fit_fn = lambda graph: graph_onemax_fitness(graph, connectivity_bonus_value=config.connectivityBonus, sparsity_penalty_value=config.sparsityPenalty)
+        fit_fn = lambda g: graph_onemax_fitness(g, conn_bonus=config.connectivityBonus, spars_penalty=config.sparsityPenalty)
 
     algo = TrackedGraphGA(
         node_count=config.nodeCount,
@@ -429,7 +420,7 @@ def get_graphga_snapshot(generation: int):
         entry = _last_graph_history[-1]
 
     # Return serialized snapshot
-    snap_genome = serialize_graph_to_cytoscape(entry["bestGraph"]) if entry.get("bestGraph") else{}
+    snap_genome = serialize_graph_to_cytoscape(entry["bestGraph"]) if entry.get("bestGraph") else {}
     if snap_genome:
         snap_genome["generation"] = entry["generation"]
 

@@ -1,38 +1,18 @@
-import React, { useState } from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-
-import Sidebar from "./components/Sidebar/Sidebar";
-import Home from "./Pages/Home/Home";
+import React, { useState } from 'react';
+import Sidebar from './components/Sidebar/Sidebar';
+import Home from './Pages/Home/Home';
 import Wiki from "./Pages/Wiki/Wiki";
 import BitGA from "./Pages/BitGA/BitGA";
 import GraphGA from "./Pages/GraphGA/GraphGA";
 import TSP from "./Pages/TSP/TSP";
 import MazeNet from "./Pages/MazeNet/MazeNet";
-
-import "./App.css";
+import './App.css';
 
 export default function App() {
+  const [activeItem, setActiveItem] = useState("Home");
   const [theme, setTheme] = useState("dark");
   const [collapsed, setCollapsed] = useState(false);
 
-  return (
-    <BrowserRouter>
-      <AppContent
-        theme={theme}
-        setTheme={setTheme}
-        collapsed={collapsed}
-        setCollapsed={setCollapsed}
-      />
-    </BrowserRouter>
-  );
-}
-
-function AppContent({
-  theme,
-  setTheme,
-  collapsed,
-  setCollapsed,
-}) {
   return (
     <div
       className={`app-layout ${
@@ -42,42 +22,30 @@ function AppContent({
       }`}
     >
       <Sidebar
+        activeItem={activeItem}
+        onNavigate={setActiveItem}
         theme={theme}
         setTheme={setTheme}
         collapsed={collapsed}
         setCollapsed={setCollapsed}
       />
 
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/wiki" element={<Wiki />} />
-        <Route path="/bitga" element={<BitGA />} />
-        <Route path="/graphga" element={<GraphGA />} />
-        <Route path="/tsp" element={<TSP />} />
-        <Route path="/maznet" element={<MazeNet />} />
+      {activeItem === "Home" && (
+        <Home onNavigate={setActiveItem} />
+      )}
 
-        <Route
-          path="/ga"
-          element={<Wiki initialSection="ga" />}
-        />
-        <Route
-          path="/gp"
-          element={<Wiki initialSection="gp" />}
-        />
-        <Route
-          path="/es"
-          element={<Wiki initialSection="es" />}
-        />
-        <Route
-          path="/ep"
-          element={<Wiki initialSection="ep" />}
-        />
+      {activeItem === "Wiki" && (
+        <Wiki onNavigate={setActiveItem} />
+      )}
 
-        <Route
-          path="*"
-          element={<Navigate to="/" replace />}
-        />
-      </Routes>
+      {activeItem === "BitGA" && <BitGA />}
+      {activeItem === "GraphGA" && <GraphGA />}
+      {activeItem === "TSP" && <TSP onNavigate={setActiveItem} />}
+      {activeItem === "MazeNet" && <MazeNet onNavigate={setActiveItem} />}
+      {activeItem === "GA" && <Wiki onNavigate={setActiveItem} initialSection="ga" />}
+      {activeItem === "GP" && <Wiki onNavigate={setActiveItem} initialSection="gp" />}
+      {activeItem === "ES" && <Wiki onNavigate={setActiveItem} initialSection="es" />}
+      {activeItem === "EP" && <Wiki onNavigate={setActiveItem} initialSection="ep" />}
     </div>
   );
 }

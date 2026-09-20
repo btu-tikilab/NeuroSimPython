@@ -12,6 +12,7 @@ import {
 
 export default function Wiki({ onNavigate, initialSection = "overview" }) {
   const [activeSection, setActiveSection] = useState(initialSection);
+  const [expandedConcept, setExpandedConcept] = useState(null);
 
   useEffect(() => {
     setActiveSection(initialSection);
@@ -287,10 +288,16 @@ export default function Wiki({ onNavigate, initialSection = "overview" }) {
                   <div
                     key={concept.term}
                     className="wiki__concept-card"
+                    onClick={() => {
+                      setExpandedConcept(concept);
+                      setActiveSection("concept_detail");
+                    }}
+                    style={{ cursor: "pointer" }}
                   >
 
-                    <h3 className="wiki__concept-title">
+                    <h3 className="wiki__concept-title" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                       {concept.term}
+                      <span style={{ fontSize: "0.8em", color: "#6b7280" }}>▶</span>
                     </h3>
 
                     <p className="wiki__concept-description">
@@ -333,6 +340,10 @@ export default function Wiki({ onNavigate, initialSection = "overview" }) {
       selection, crossover and mutation until an optimal
       solution is found.
     </p>
+
+    <div style={{ margin: "2rem 0", textAlign: "center", background: "#f9fafb", padding: "1.5rem", borderRadius: "12px", border: "1px solid #e5e7eb" }}>
+      <img src="/ga_flowchart.jpg" alt="Genetic Algorithm Flowchart" style={{ maxWidth: "100%", maxHeight: "500px", borderRadius: "8px", objectFit: "contain" }} />
+    </div>
 
     <div className="wiki__detail-table">
 
@@ -631,15 +642,20 @@ export default function Wiki({ onNavigate, initialSection = "overview" }) {
         <div
           key={concept.term}
           className="wiki__concept-card"
+          onClick={() => {
+            setExpandedConcept(concept);
+            setActiveSection("concept_detail");
+          }}
+          style={{ cursor: "pointer" }}
         >
-          <h3 className="wiki__concept-title">
+          <h3 className="wiki__concept-title" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             {concept.term}
+            <span style={{ fontSize: "0.8em", color: "#6b7280" }}>▶</span>
           </h3>
 
           <p className="wiki__concept-description">
             {concept.def}
           </p>
-
         </div>
 
       ))}
@@ -688,7 +704,12 @@ export default function Wiki({ onNavigate, initialSection = "overview" }) {
           </div>
 
           <div className="wiki__operator-description">
-            {op.desc}
+            <p style={{ marginBottom: "12px", color: "#374151" }}>{op.desc}</p>
+            {op.example && (
+              <p style={{ fontSize: "0.95em", color: "#1e3a8a", backgroundColor: "#eff6ff", padding: "10px", borderRadius: "6px", borderLeft: "4px solid #3b82f6" }}>
+                {op.example}
+              </p>
+            )}
           </div>
 
         </div>
@@ -755,6 +776,44 @@ export default function Wiki({ onNavigate, initialSection = "overview" }) {
 
 
         {/* GP, ES, EP, Operators and Guides will be added here */}
+
+        {/* ==========================
+            CONCEPT DETAIL PAGE
+        ========================== */}
+        {activeSection === "concept_detail" && expandedConcept && (
+          <section className="wiki__section">
+            <button
+              className="wiki__back-btn"
+              onClick={() => setActiveSection("concepts")}
+            >
+              ← Back to Key Concepts
+            </button>
+
+            <h1 className="wiki__heading">
+              {expandedConcept.term}
+            </h1>
+
+            <div className="wiki__concept-detail-content" style={{ marginTop: "2rem" }}>
+              <div style={{ marginBottom: "2rem" }}>
+                <h2 style={{ fontSize: "1.25rem", color: "#4f46e5", marginBottom: "0.5rem" }}>Definition & Context</h2>
+                <p style={{ fontSize: "1.1rem", color: "#374151", lineHeight: "1.6", whiteSpace: "pre-line" }}>{expandedConcept.detailedDef}</p>
+              </div>
+
+              {expandedConcept.image && (
+                <div style={{ marginBottom: "2rem", padding: "1.5rem", background: "#f9fafb", borderRadius: "12px", textAlign: "center", border: "1px solid #e5e7eb" }}>
+                  <img src={expandedConcept.image} alt={expandedConcept.term} style={{ maxWidth: "100%", maxHeight: "300px", borderRadius: "8px", objectFit: "contain" }} />
+                </div>
+              )}
+
+              {expandedConcept.practicalExample && (
+                <div style={{ padding: "1.5rem", background: "#eff6ff", borderRadius: "12px", border: "1px solid #bfdbfe" }}>
+                  <h2 style={{ fontSize: "1.25rem", color: "#1d4ed8", marginBottom: "0.75rem" }}>Diagram Explanation & Example</h2>
+                  <p style={{ fontSize: "1.05rem", color: "#1e3a8a", lineHeight: "1.6" }}>{expandedConcept.practicalExample}</p>
+                </div>
+              )}
+            </div>
+          </section>
+        )}
 
       </section>
 
