@@ -3,12 +3,16 @@
 
 from .encoding import BitStringEncoding
 from .selection import TournamentSelection
-from .crossover import UniformCrossover
-from .mutation import BitFlipMutation
+from .crossover import UniformCrossover, SinglePointCrossover, TwoPointCrossover
+from .mutation import BitFlipMutation, SwapMutation, InversionMutation
 
 __all__ = [
     "BitStringEncoding",
     "TournamentSelection",
     "UniformCrossover",
-    "BitFlipMutation"
+    "SinglePointCrossover",
+    "TwoPointCrossover",
+    "BitFlipMutation",
+    "SwapMutation",
+    "InversionMutation",
 ]

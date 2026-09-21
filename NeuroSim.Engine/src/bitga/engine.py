@@ -5,9 +5,6 @@ Implements the BaseAlgorithm lifecycle
 """
 
 import random
-import time
-from dataclasses import dataclass
-from typing import List
 
 from core.base_algorithm import BaseAlgorithm
 
@@ -17,27 +14,6 @@ from .operators import (
     UniformCrossover,
     BitFlipMutation,
 )
-
-
-@dataclass
-class GenerationStats:
-    generation: int
-    best_fitness: float
-    avg_fitness: float
-    worst_fitness: float
-    best_genome: List[int]
-
-
-@dataclass
-class RunResult:
-    problem_name: str
-    run_id: str
-    best_fitness: float
-    best_solution: List[int]
-    generations_to_convergence: int
-    total_generations: int
-    convergence_history: List[GenerationStats]
-    execution_time_seconds: float
 
 
 class BitGAEngine(BaseAlgorithm):
@@ -51,14 +27,13 @@ class BitGAEngine(BaseAlgorithm):
         bitstring_length=20,
         tournament_size=3,
         mutation_rate=None,
-        crossover_rate=0.8,
+        crossover_probability=0.8,
         seed=42,
-        run_id="run_001",
+        crossover=None,
+        mutation=None,
     ):
 
         self.problem = problem
-        self.run_id = run_id
-
         self.bitstring_length = bitstring_length
 
         self._rng = random.Random(seed)
@@ -69,71 +44,47 @@ class BitGAEngine(BaseAlgorithm):
             rng=self._rng,
         )
 
-        # Operators
         self.encoding = BitStringEncoding(bitstring_length)
         self.selection = TournamentSelection(tournament_size)
-        self.crossover = UniformCrossover(crossover_rate)
-        self.mutation = BitFlipMutation(mutation_rate=mutation_rate, length=bitstring_length,
+
+        self.crossover = (
+            crossover if crossover is not None
+            else UniformCrossover(crossover_probability)
         )
 
-        # Runtime state
-        self.population = None
+        self.mutation = (
+            mutation if mutation is not None
+            else BitFlipMutation(mutation_rate=mutation_rate, length=bitstring_length)
+        )
+
         self.fitness_values = None
 
-        self.best_solution_ever = None
-        self.best_fitness_ever = float("-inf")
-        self.generations_to_convergence = 0
-        self.convergence_history = []
-
-        self.current_generation = 0
-        self.start_time = None
-
-    # -----------------------------------------------------
-    # BaseAlgorithm Hooks
-    # -----------------------------------------------------
-
     def initialize(self):
+        """
+        Create the initial population of random bit individuals.
+        """
 
-        self.start_time = time.time()
-
-        population = [
+        return [
             self.encoding.generate_random(self._rng)
             for _ in range(self.population_size)
         ]
 
-        return population
-
     def evaluate(self, population):
+        """
+        Evaluate the fitness of every individual.
+        """
 
         self.fitness_values = [
             self.problem.fitness(ind)
             for ind in population
         ]
 
-        best_idx = self.fitness_values.index(max(self.fitness_values))
-
-        best = self.fitness_values[best_idx]
-        avg = sum(self.fitness_values) / len(self.fitness_values)
-        worst = min(self.fitness_values)
-
-        if best > self.best_fitness_ever:
-            self.best_fitness_ever = best
-            self.best_solution_ever = population[best_idx].copy()
-            self.generations_to_convergence = len(self.convergence_history)
-
-        self.convergence_history.append(
-            GenerationStats(
-                generation=len(self.convergence_history),
-                best_fitness=best,
-                avg_fitness=avg,
-                worst_fitness=worst,
-                best_genome=population[best_idx].copy(),
-            )
-        )
-
         return population
 
     def select(self, population):
+        """
+        Select parents using Tournament Selection.
+        """
 
         return self.selection.select(
             population,
@@ -143,6 +94,9 @@ class BitGAEngine(BaseAlgorithm):
         )
 
     def breed(self, parents):
+        """
+        Generate offspring using crossover and mutation.
+        """
 
         offspring = []
 
@@ -156,42 +110,36 @@ class BitGAEngine(BaseAlgorithm):
                     self._rng,
                 )
 
-                offspring.append(
-                    self.mutation.mutate(child1, self._rng)
-                )
-
-                offspring.append(
-                    self.mutation.mutate(child2, self._rng)
-                )
+                offspring.append(self.mutation.mutate(child1, self._rng))
+                offspring.append(self.mutation.mutate(child2, self._rng))
 
             else:
 
                 offspring.append(
-                    self.mutation.mutate(
-                        parents[i],
-                        self._rng,
-                    )
+                    self.mutation.mutate(parents[i], self._rng)
                 )
 
         return offspring
 
     def replace(self, population, offspring):
-
-        self.current_generation += 1
+        """
+        Replace the current population with the offspring.
+        """
 
         return offspring[: self.population_size]
 
     def best_solution(self, population):
+        """
+        Return the individual with the highest fitness.
+        """
 
-        execution_time = time.time() - self.start_time
+        if self.fitness_values is None:
+            raise RuntimeError(
+                "best_solution() was called before any generation was "
+                "evaluated. Call evaluate() (directly or via run()) at "
+                "least once first."
+            )
 
-        return RunResult(
-            problem_name=type(self.problem).__name__,
-            run_id=self.run_id,
-            best_fitness=self.best_fitness_ever,
-            best_solution=self.best_solution_ever,
-            generations_to_convergence=self.generations_to_convergence,
-            total_generations=self.max_generations,
-            convergence_history=self.convergence_history,
-            execution_time_seconds=execution_time,
-        )
+        best_idx = self.fitness_values.index(max(self.fitness_values))
+
+        return population[best_idx]

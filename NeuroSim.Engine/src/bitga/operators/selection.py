@@ -7,19 +7,13 @@ Choose individuals for reproduction based on fitness
 
 from typing import List
 
-from core.base_selection import BaseSelection
 
-
-class TournamentSelection(BaseSelection):
+class TournamentSelection:
     """Select individuals via tournament."""
 
     def __init__(self, tournament_size: int = 3):
         """
         Initialize tournament selection.
-
-        Args:
-            tournament_size: Number of individuals per tournament (k)
-                            Larger k = higher selection pressure
         """
         if tournament_size < 2:
             raise ValueError("tournament_size must be >= 2")
@@ -33,24 +27,8 @@ class TournamentSelection(BaseSelection):
                rng) -> List:
         """
         Select parents using tournament selection.
-
-        Algorithm:
-        1. For each parent needed:
-        2.   Randomly pick k individuals
-        3.   Return the one with highest fitness
-        4. Repeat num_parents times
-
-        Args:
-            population: List of individuals (bitstrings)
-            fitness_values: List of fitness values (same order as population)
-            num_parents: How many parents to select
-            rng: Seeded random number generator
-
-        Returns:
-            parents: List of selected individuals
         """
 
-        # Validate inputs
         if len(population) != len(fitness_values):
             raise ValueError(
                 f"Population size {len(population)} != "
@@ -63,18 +41,20 @@ class TournamentSelection(BaseSelection):
                 f"population size {len(population)}"
             )
 
+        if num_parents <= 0:
+            raise ValueError(
+                f"num_parents must be positive, got {num_parents}"
+            )
+
         parents = []
         population_size = len(population)
 
-        # Select num_parents individuals
         for _ in range(num_parents):
-            # Step 1: Random tournament
             tournament_indices = [
                 rng.randint(0, population_size - 1)
                 for _ in range(self.tournament_size)
             ]
 
-            # Step 2: Find winner (highest fitness)
             winner_idx = tournament_indices[0]
             winner_fitness = fitness_values[winner_idx]
 
@@ -83,7 +63,6 @@ class TournamentSelection(BaseSelection):
                     winner_idx = idx
                     winner_fitness = fitness_values[idx]
 
-            # Step 3: Add winner to parents
             parents.append(population[winner_idx])
 
         return parents
