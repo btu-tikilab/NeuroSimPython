@@ -2,66 +2,27 @@
   padding: 24px;
   max-width: 1200px;
   margin: 0 auto;
-  color: #1e293b;
+  color: #F8FAFC;
   font-family: 'Inter', sans-serif;
   animation: fadeIn 0.4s ease-out;
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
-
-/* =========================
-   BREADCRUMB
-========================= */
-
-.results-page .breadcrumb {
-  color: #64748b !important;
-  font-size: 14px;
-  margin-bottom: 8px;
-}
-
-/* =========================
-   HEADER
-========================= */
 
 .results-header-section {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-top: 10px;
-  margin-bottom: 24px;
 }
-
-.results-header-section .page-title {
-  color: #1e293b !important;
-  font-size: 32px;
-  font-weight: 700;
-  margin: 8px 0 4px 0;
-}
-
-.results-header-section .page-description {
-  color: #64748b !important;
-  font-size: 15px;
-  margin: 0;
-}
-
-/* =========================
-   BACK TO CONFIGURATION
-========================= */
 
 .back-to-config-btn {
-  background: #ffffff;
-  border: 1px solid #c7c9d9;
-  color: #6366f1;
+  background: rgba(99, 102, 241, 0.15);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  color: #818CF8;
   padding: 10px 18px;
   border-radius: 8px;
   cursor: pointer;
@@ -73,26 +34,12 @@
 }
 
 .back-to-config-btn:hover {
-  background: #6366f1;
-  color: #ffffff;
-  border-color: #6366f1;
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+  background: #6366F1;
+  color: #FFFFFF;
+  box-shadow: 0 0 15px rgba(99, 102, 241, 0.4);
 }
 
-/* =========================
-   SECTION DIVIDER
-========================= */
-
-.section-divider {
-  height: 1px;
-  background: #e2e5ec;
-  margin-bottom: 24px;
-}
-
-/* =========================
-   METRICS
-========================= */
-
+/* Metrics Cards Grid */
 .metrics-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -101,25 +48,21 @@
 }
 
 .metric-card {
-  background: #ffffff;
-  border: 1px solid #e2e5ec;
+  background: rgba(30, 41, 59, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
   border-radius: 12px;
   padding: 20px;
   display: flex;
   align-items: center;
   gap: 16px;
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .metric-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
 }
-
-/* =========================
-   METRIC ICONS
-========================= */
 
 .metric-icon-wrapper {
   width: 48px;
@@ -128,7 +71,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
 }
 
 .metric-icon {
@@ -136,32 +78,28 @@
 }
 
 .fitness-bg {
-  background: #ecfdf5;
-  color: #10b981;
-  border: 1px solid #a7f3d0;
+  background: rgba(16, 185, 129, 0.15);
+  color: #10B981;
+  border: 1px solid rgba(16, 185, 129, 0.3);
 }
 
 .avg-bg {
-  background: #eff6ff;
-  color: #3b82f6;
-  border: 1px solid #bfdbfe;
+  background: rgba(59, 130, 246, 0.15);
+  color: #3B82F6;
+  border: 1px solid rgba(59, 130, 246, 0.3);
 }
 
 .gen-bg {
-  background: #faf5ff;
-  color: #a855f7;
-  border: 1px solid #e9d5ff;
+  background: rgba(168, 85, 247, 0.15);
+  color: #A855F7;
+  border: 1px solid rgba(168, 85, 247, 0.3);
 }
-
-/* =========================
-   METRIC TEXT
-========================= */
 
 .metric-info h4 {
   margin: 0;
   font-size: 13px;
   font-weight: 500;
-  color: #64748b !important;
+  color: #94A3B8;
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -170,13 +108,12 @@
   margin: 4px 0 0 0;
   font-size: 28px;
   font-weight: 700;
-  color: #1e293b !important;
+  background: linear-gradient(135deg, #FFFFFF 0%, #CBD5E1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-/* =========================
-   MAIN RESULTS LAYOUT
-========================= */
-
+/* Results Layout Grid */
 .results-layout {
   display: grid;
   grid-template-columns: 1.1fr 0.9fr;
@@ -189,34 +126,13 @@
   }
 }
 
-/* =========================
-   COLUMNS
-========================= */
-
-.left-column,
-.right-column {
-  min-width: 0;
-}
-
-/* =========================
-   RESULT CARDS
-========================= */
-
-.visualizer-card,
-.chart-card,
-.stats-card,
-.config-summary-card {
-  background: #ffffff;
-  border: 1px solid #e2e5ec;
+.visualizer-card, .chart-card, .stats-card, .config-summary-card {
+  background: rgba(30, 41, 59, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 16px;
   padding: 24px;
   margin-bottom: 24px;
-  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
 }
-
-/* =========================
-   CARD TITLES
-========================= */
 
 .card-title {
   display: flex;
@@ -228,34 +144,22 @@
 .card-title h2 {
   font-size: 16px;
   font-weight: 600;
-  color: #1e293b !important;
+  color: #E2E8F0;
   margin: 0;
 }
 
-.card-title svg {
-  color: #6366f1;
-  flex-shrink: 0;
-}
-
-/* =========================
-   GRAPH VISUALIZATION
-========================= */
-
 .cytoscape-container {
-  background: #f8fafc;
+  background: rgba(15, 23, 42, 0.6);
   border-radius: 12px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid rgba(255, 255, 255, 0.05);
   overflow: hidden;
 }
 
-/* =========================
-   CHART
-========================= */
-
+/* Chart Styles */
 .svg-chart-container {
-  background: #f8fafc;
+  background: rgba(15, 23, 42, 0.6);
   border-radius: 12px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid rgba(255, 255, 255, 0.05);
   padding: 16px;
   display: flex;
   flex-direction: column;
@@ -273,7 +177,7 @@
   align-items: center;
   gap: 8px;
   font-size: 12px;
-  color: #64748b !important;
+  color: #94A3B8;
 }
 
 .legend-dot {
@@ -283,11 +187,11 @@
 }
 
 .legend-dot.green {
-  background-color: #10b981;
+  background-color: #10B981;
 }
 
 .legend-dot.blue {
-  background-color: #3b82f6;
+  background-color: #3B82F6;
 }
 
 .legend-dot.dashed {
@@ -296,10 +200,7 @@
   width: 14px;
 }
 
-/* =========================
-   STATS
-========================= */
-
+/* Stats and Summary Lists */
 .stats-list {
   display: flex;
   flex-direction: column;
@@ -310,26 +211,22 @@
   display: flex;
   justify-content: space-between;
   font-size: 14px;
-  color: #64748b !important;
+  color: #94A3B8;
   padding-bottom: 8px;
-  border-bottom: 1px solid #edf0f4;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
 }
 
 .stat-row strong {
-  color: #1e293b !important;
+  color: #F1F5F9;
 }
 
 .stat-row .text-green {
-  color: #10b981 !important;
+  color: #10B981;
 }
 
 .stat-row .text-red {
-  color: #ef4444 !important;
+  color: #EF4444;
 }
-
-/* =========================
-   CONFIGURATION SUMMARY
-========================= */
 
 .summary-grid {
   display: grid;
@@ -338,15 +235,15 @@
 }
 
 .summary-grid div {
-  background: #f8fafc;
+  background: rgba(15, 23, 42, 0.3);
   padding: 12px;
   border-radius: 8px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid rgba(255, 255, 255, 0.03);
 }
 
 .summary-grid div span {
   font-size: 11px;
-  color: #64748b !important;
+  color: #64748B;
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -355,72 +252,5 @@
   margin: 4px 0 0 0;
   font-size: 14px;
   font-weight: 600;
-  color: #1e293b !important;
-}
-
-/* =========================
-   GENERAL TEXT PROTECTION
-========================= */
-
-.results-page h1,
-.results-page h2,
-.results-page h3,
-.results-page h4 {
-  color: #1e293b;
-}
-
-.results-page p {
-  color: #64748b;
-}
-
-/* Keep metric values dark */
-.results-page .metric-value {
-  color: #1e293b !important;
-}
-
-/* =========================
-   RESPONSIVE
-========================= */
-
-@media (max-width: 700px) {
-  .results-page {
-    padding: 16px;
-  }
-
-  .summary-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .results-header-section {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 15px;
-  }
-
-  .results-header-section .page-title {
-    font-size: 28px;
-  }
-}
-
-/* =========================
-  HEADER VISIBILITY
-========================= */
-
-.results-page .breadcrumb {
-  color: #94a3b8 !important;
-}
-
-.results-page .results-header-section .page-title {
-  color: #203549 !important;
-  -webkit-text-fill-color: #f8fafc !important;
-  font-size: 32px !important;
-  font-weight: 700 !important;
-  margin: 8px 0 4px 0 !important;
-}
-
-.results-page .results-header-section .page-description {
-  color: #17202a !important;
-  -webkit-text-fill-color: #cbd5e1 !important;
-  font-size: 15px !important;
-  margin: 0 !important;
+  color: #E2E8F0;
 }

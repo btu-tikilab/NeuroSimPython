@@ -343,123 +343,6 @@ def serialize_graph_to_cytoscape(graph: Graph) -> dict:
     return {"nodes": nodes, "edges": edges}
 
 
-# ==================== ENDPOINTS ====================
-
-@app.get("/app-info")
-@app.get("/api/info")
-def get_app_info():
-    return {
-        "appName": "NeuroSim",
-        "version": "1.0.0"
-    }
-
-
-@app.get("/playgrounds")
-@app.get("/api/playgrounds")
-def get_playgrounds():
-    return {
-        "playgrounds": [
-            {
-                "id": "bitga",
-                "name": "BitGA",
-                "description": "Binary Genetic Algorithm Playground"
-            },
-            {
-                "id": "graphga",
-                "name": "GraphGA",
-                "description": "Graph Based Genetic Algorithm Playground"
-            }
-        ]
-    }
-
-
-@app.post("/api/graphga/run")
-def run_graphga(config: RunConfig):
-    global _last_graph_result, _last_graph_history, _last_graph_config
-
-    _last_graph_config = config
-    rng = random.Random(config.seed)
-
-    if config.problem == "graph_pathfinding":
-        fit_fn = lambda g: graph_pathfinding_fitness(g, spars_penalty=config.sparsityPenalty)
-    else:
-        fit_fn = lambda g: graph_onemax_fitness(g, conn_bonus=config.connectivityBonus,
-                                                spars_penalty=config.sparsityPenalty)
-
-    algo = TrackedGraphGA(
-        node_count=config.nodeCount,
-        fitness_fn=fit_fn,
-        population_size=config.populationSize,
-        max_generations=config.generations,
-        rng=rng,
-        directed=(config.graphMode == "Directed"),
-        allow_self_loop=config.allowSelfLoop,
-        tournament_size=config.tournamentSize,
-        crossover_rate=config.crossoverRate,
-        mutation_rate=config.mutationRate,
-        elitism=config.eliteCount,
-        parent_selection=config.parentSelection,
-        crossover_type=config.crossoverType,
-        mutation_type=config.mutationType,
-        target_fitness=config.targetFitness
-    )
-
-    best_individual = algo.run()
-    _last_graph_result = best_individual.graph
-    _last_graph_history = algo.history_log
-
-    return {
-        "generation": len(_last_graph_history) - 1,
-        "bestFitness": best_individual.fitness,
-        "avgFitness": _last_graph_history[-1]["avgFitness"],
-        "worstFitness": _last_graph_history[-1]["worstFitness"],
-    }
-
-
-@app.get("/api/graphga/best")
-def get_graphga_best():
-    if _last_graph_result is None:
-        return {"nodes": [], "edges": [], "fitness": 0.0, "generation": 0}
-    return serialize_graph_to_cytoscape(_last_graph_result)
-
-
-@app.get("/api/graphga/history")
-def get_graphga_history():
-    return _last_graph_history
-
-
-@app.get("/api/graphga/snapshot/{generation}")
-def get_graphga_snapshot(generation: int):
-    if not _last_graph_history:
-        return {
-            "generation": generation,
-            "bestFitness": 0.0,
-            "avgFitness": 0.0,
-            "worstFitness": 0.0,
-            "bestGenome": {},
-        }
-
-    entry = next(
-        (e for e in _last_graph_history if e["generation"] == generation),
-        None,
-    )
-    if entry is None:
-        entry = _last_graph_history[-1]
-
-    # Return serialized snapshot
-    snap_genome = serialize_graph_to_cytoscape(entry["bestGraph"]) if entry.get("bestGraph") else {}
-    if snap_genome:
-        snap_genome["generation"] = entry["generation"]
-
-    return {
-        "generation": generation,
-        "bestFitness": entry["bestFitness"],
-        "avgFitness": entry["avgFitness"],
-        "worstFitness": entry["worstFitness"],
-        "bestGenome": snap_genome,
-    }
-
-
 # ==================== BIT GA HELPERS ====================
 
 MAX_KNAPSACK_ITEMS = 200
@@ -663,6 +546,7 @@ def get_graphga_snapshot(generation: int):
     if entry is None:
         entry = _last_graph_history[-1]
 
+    # Return serialized snapshot
     snap_genome = serialize_graph_to_cytoscape(entry["bestGraph"]) if entry.get("bestGraph") else {}
     if snap_genome:
         snap_genome["generation"] = entry["generation"]
