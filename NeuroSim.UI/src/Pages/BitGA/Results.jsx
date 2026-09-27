@@ -76,7 +76,7 @@ const Results = ({ results, back }) => {
           </div>
 
           <div className="result-value">
-            {results.bestFitness ?? "-"}
+            {results.best_fitness ?? "-"}
           </div>
         </div>
 
@@ -87,8 +87,8 @@ const Results = ({ results, back }) => {
           </div>
 
           <div className="best-solution">
-            {Array.isArray(results.bestSolution)
-              ? results.bestSolution.map((bit, index) => (
+            {Array.isArray(results.best_solution)
+              ? results.best_solution.map((bit, index) => (
                   <span
                     className="solution-bit"
                     key={index}
@@ -96,7 +96,7 @@ const Results = ({ results, back }) => {
                     {bit}
                   </span>
                 ))
-              : results.bestSolution ?? "-"}
+              : results.best_solution ?? "-"}
           </div>
         </div>
 
@@ -107,8 +107,8 @@ const Results = ({ results, back }) => {
           </div>
 
           <div className="result-value">
-            {results.totalGenerations ??
-              results.generationsToConvergence ??
+            {results.total_generations ??
+              results.generations_to_convergence ??
               "-"}
           </div>
         </div>
@@ -125,27 +125,27 @@ const Results = ({ results, back }) => {
 
           <div>
             <strong>Run ID</strong>
-            <p>{results.runId ?? "-"}</p>
+            <p>{results.problem_id ?? "-"}</p>
           </div>
 
           <div>
             <strong>Generations to Convergence</strong>
             <p>
-              {results.generationsToConvergence ?? "-"}
+              {results.generations_to_convergence ?? "-"}
             </p>
           </div>
 
           <div>
             <strong>Total Generations</strong>
             <p>
-              {results.totalGenerations ?? "-"}
+              {results.total_generations ?? "-"}
             </p>
           </div>
 
           <div>
             <strong>Execution Time</strong>
             <p>
-              {results.executionTimeSeconds ?? "-"} seconds
+              {results.execution_time_seconds ?? "-"} seconds
             </p>
           </div>
 
