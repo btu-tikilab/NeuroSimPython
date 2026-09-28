@@ -1,4 +1,5 @@
 import "./Results.css";
+import { useState } from "react";
 
 import {
   FaArrowLeft,
@@ -8,6 +9,8 @@ import {
 } from "react-icons/fa";
 
 const Results = ({ results, back }) => {
+  const [showOnlyChanges, setShowOnlyChanges] = useState(true);
+
   if (!results) {
     return (
       <div className="results-page">
@@ -23,6 +26,13 @@ const Results = ({ results, back }) => {
       </div>
     );
   }
+
+  const history = results.convergenceHistory || [];
+
+  // Table rows: all generations, or only ones where best fitness improved
+  const visibleRows = showOnlyChanges
+    ? history.filter((h, i) => i === 0 || h.bestFitness !== history[i - 1].bestFitness)
+    : history;
 
   return (
     <div className="results-page">
@@ -76,7 +86,7 @@ const Results = ({ results, back }) => {
           </div>
 
           <div className="result-value">
-            {results.best_fitness ?? "-"}
+            {results.bestFitness ?? "-"}
           </div>
         </div>
 
@@ -87,8 +97,8 @@ const Results = ({ results, back }) => {
           </div>
 
           <div className="best-solution">
-            {Array.isArray(results.best_solution)
-              ? results.best_solution.map((bit, index) => (
+            {Array.isArray(results.bestSolution)
+              ? results.bestSolution.map((bit, index) => (
                   <span
                     className="solution-bit"
                     key={index}
@@ -96,7 +106,7 @@ const Results = ({ results, back }) => {
                     {bit}
                   </span>
                 ))
-              : results.best_solution ?? "-"}
+              : results.bestSolution ?? "-"}
           </div>
         </div>
 
@@ -107,12 +117,58 @@ const Results = ({ results, back }) => {
           </div>
 
           <div className="result-value">
-            {results.total_generations ??
-              results.generations_to_convergence ??
+            {results.totalGenerations ??
+              results.generationsToConvergence ??
               "-"}
           </div>
         </div>
 
+      </div>
+
+      <div className="result-card experiment-card">
+        <div className="result-card-title">
+          <FaChartLine />
+          <h2>Generation History</h2>
+        </div>
+
+        {history.length > 0 ? (
+          <>
+            <label style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "12px", fontSize: "14px", cursor: "pointer" }}>
+              <input
+                type="checkbox"
+                checked={showOnlyChanges}
+                onChange={(e) => setShowOnlyChanges(e.target.checked)}
+              />
+              Show only generations where best fitness improved
+              {showOnlyChanges && ` (${visibleRows.length} of ${history.length})`}
+            </label>
+
+            <div style={{ maxHeight: "400px", overflowY: "auto" }}>
+              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "14px" }}>
+                <thead>
+                  <tr style={{ textAlign: "left", borderBottom: "2px solid #334155" }}>
+                    <th style={{ padding: "8px" }}>Generation</th>
+                    <th style={{ padding: "8px" }}>Best</th>
+                    <th style={{ padding: "8px" }}>Average</th>
+                    <th style={{ padding: "8px" }}>Worst</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {visibleRows.map((h) => (
+                    <tr key={h.generation} style={{ borderBottom: "1px solid #1e293b" }}>
+                      <td style={{ padding: "8px" }}>{h.generation}</td>
+                      <td style={{ padding: "8px", fontWeight: "600" }}>{h.bestFitness}</td>
+                      <td style={{ padding: "8px" }}>{h.avgFitness.toFixed(2)}</td>
+                      <td style={{ padding: "8px" }}>{h.worstFitness}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
+        ) : (
+          <p>No generation data available.</p>
+        )}
       </div>
 
       <div className="result-card experiment-card">
@@ -125,27 +181,29 @@ const Results = ({ results, back }) => {
 
           <div>
             <strong>Run ID</strong>
-            <p>{results.problem_id ?? "-"}</p>
+            <p>{results.runId ?? "-"}</p>
           </div>
 
           <div>
             <strong>Generations to Convergence</strong>
             <p>
-              {results.generations_to_convergence ?? "-"}
+              {results.generationsToConvergence ?? "-"}
             </p>
           </div>
 
           <div>
             <strong>Total Generations</strong>
             <p>
-              {results.total_generations ?? "-"}
+              {results.totalGenerations ?? "-"}
             </p>
           </div>
 
           <div>
             <strong>Execution Time</strong>
             <p>
-              {results.execution_time_seconds ?? "-"} seconds
+              {results.executionTimeSeconds != null
+                ? results.executionTimeSeconds.toFixed(3)
+                : "-"} seconds
             </p>
           </div>
 

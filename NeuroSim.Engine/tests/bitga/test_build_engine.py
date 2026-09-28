@@ -21,6 +21,21 @@ class TestBuildEngineValidation:
         with pytest.raises(ValueError, match="Unknown mutation_type"):
             build_engine(onemax_small, {"bitstring_length": 10, "mutation_type": "Nonexistent"})
 
+    def test_negative_elitism_raises(self, onemax_small):
+        with pytest.raises(ValueError, match="elitism must be >= 0"):
+            build_engine(onemax_small, {"bitstring_length": 10, "elitism": -1})
+
+    @pytest.mark.parametrize("bad_elitism", [20, 25])
+    def test_elitism_not_below_population_size_raises(self, onemax_small, bad_elitism):
+        """elitism must leave room for at least one offspring, so it has to
+        be strictly less than population_size."""
+        with pytest.raises(ValueError, match="must be < population_size"):
+            build_engine(onemax_small, {
+                "bitstring_length": 10,
+                "population_size": 20,
+                "elitism": bad_elitism,
+            })
+
 
 class TestBuildEngineDefaults:
     def test_returns_a_bitga_engine(self, onemax_small):
@@ -42,10 +57,16 @@ class TestBuildEngineDefaults:
             "generations": 77,
             "tournament_size": 5,
             "seed": 99,
+            "elitism": 4,
         })
         assert engine.population_size == 33
         assert engine.max_generations == 77
         assert engine.selection.tournament_size == 5
+        assert engine.elitism == 4
+
+    def test_default_elitism_is_zero(self, onemax_small):
+        engine = build_engine(onemax_small, {"bitstring_length": 10})
+        assert engine.elitism == 0
 
 
 class TestBuildEngineCrossoverTypes:

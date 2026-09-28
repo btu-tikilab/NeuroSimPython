@@ -43,6 +43,7 @@ class BitGARunRequest(BaseModel):
     crossoverType: str = "Uniform"
     crossoverProbability: float = 0.5
     mutationType: str = "Bit Flip"
+    eliteCount: int = 0
     values: Optional[List[float]] = None
     weights: Optional[List[float]] = None
     capacity: Optional[float] = None
@@ -594,6 +595,7 @@ def run_bitga(request: BitGARunRequest) -> BitGARunResponse:
         "crossover_probability": request.crossoverProbability,
         "mutation_type": request.mutationType,
         "mutation_rate": request.mutationRate,
+        "elitism": request.eliteCount,
     }
 
     try:

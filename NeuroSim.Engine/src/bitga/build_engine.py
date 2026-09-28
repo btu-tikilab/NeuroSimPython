@@ -1,4 +1,4 @@
-# AUTH:DEVNEUROSIM:7A3F9E2B | NeuroSim.Engine/src/bitga/config.py
+# AUTH:DEVNEUROSIM:7A3F9E2B | NeuroSim.Engine/src/bitga/build_engine.py
 """
 BitGA Engine Builder
 Translates a config dict into a fully configured BitGAEngine.
@@ -84,6 +84,7 @@ def build_engine(problem, config: Dict[str, Any]) -> BitGAEngine:
         bitstring_length=config["bitstring_length"],
         tournament_size=config.get("tournament_size", 3),
         seed=config.get("seed", 42),
+        elitism=config.get("elitism", 0),
         crossover=crossover,
         mutation=mutation,
     )

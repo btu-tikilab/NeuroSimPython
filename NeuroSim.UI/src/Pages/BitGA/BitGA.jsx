@@ -11,6 +11,7 @@ const BitGA = () => {
   const [selectedParadigm, setSelectedParadigm] = useState("GA");
   const [selectedProblem, setSelectedProblem] = useState("onemax");
   const [results, setResults] = useState(null);
+  const [savedConfig, setSavedConfig] = useState(null);
 
   // ------------------------------------------------------------
   // Step 1 → Paradigm
@@ -34,7 +35,10 @@ const BitGA = () => {
   // Step 3 → Configuration / Run
   // ------------------------------------------------------------
 
-  const handleRun = async (config) => {
+  const handleRun = async (config, uiState) => {
+    // Remember the form values so returning to Configuration restores them.
+    setSavedConfig(uiState);
+
     try {
       const response = await fetch("http://127.0.0.1:8000/bitga/run", {
         method: "POST",
@@ -103,6 +107,7 @@ const BitGA = () => {
           selectedProblem={selectedProblem}
           back={handleBackToProblem}
           onRun={handleRun}
+          savedConfig={savedConfig}
         />
       )}
 

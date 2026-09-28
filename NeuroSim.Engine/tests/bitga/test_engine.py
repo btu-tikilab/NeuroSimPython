@@ -92,11 +92,90 @@ class TestBreed:
 
 class TestReplace:
     def test_truncates_offspring_to_population_size(self, onemax_small):
+        """With elitism=0 (the default) the previous population is discarded
+        entirely and only offspring survive."""
         engine = BitGAEngine(problem=onemax_small, population_size=5, bitstring_length=10, seed=1)
         offspring = [[i] for i in range(10)]
         next_gen = engine.replace([], offspring)
         assert len(next_gen) == 5
         assert next_gen == offspring[:5]
+
+
+class TestElitism:
+    def test_default_is_zero(self, onemax_small):
+        engine = BitGAEngine(problem=onemax_small, population_size=10, bitstring_length=10, seed=1)
+        assert engine.elitism == 0
+
+    def test_negative_elitism_raises(self, onemax_small):
+        with pytest.raises(ValueError, match="elitism must be >= 0"):
+            BitGAEngine(problem=onemax_small, population_size=10, bitstring_length=10, elitism=-1)
+
+    @pytest.mark.parametrize("bad_elitism", [10, 15])
+    def test_elitism_not_below_population_size_raises(self, onemax_small, bad_elitism):
+        with pytest.raises(ValueError, match="must be < population_size"):
+            BitGAEngine(problem=onemax_small, population_size=10, bitstring_length=10, elitism=bad_elitism)
+
+    def test_best_parent_survives_into_next_generation(self):
+        """The whole point of elitism: a strong parent must not be lost even
+        when every offspring is worse."""
+        problem = OneMaxProblem(length=6)
+        engine = BitGAEngine(problem=problem, population_size=4, bitstring_length=6, seed=1, elitism=1)
+
+        population = [[1, 1, 1, 1, 1, 1], [0, 0, 0, 0, 0, 0], [1, 0, 0, 0, 0, 0], [0, 1, 0, 0, 0, 0]]
+        offspring = [[0, 0, 0, 0, 0, 0]] * 4     # all strictly worse
+
+        engine.evaluate(offspring)               # mirrors the real lifecycle order
+        next_gen = engine.replace(population, offspring)
+
+        assert [1, 1, 1, 1, 1, 1] in next_gen
+
+    def test_population_size_is_preserved(self, onemax_small):
+        engine = BitGAEngine(problem=onemax_small, population_size=10, bitstring_length=10, seed=1, elitism=3)
+        population = engine.initialize()
+        engine.evaluate(population)
+
+        for _ in range(5):
+            offspring = engine.breed(engine.select(population))
+            engine.evaluate(offspring)
+            population = engine.replace(population, offspring)
+            assert len(population) == 10
+
+    def test_fitness_values_stay_aligned_with_population(self, onemax_small):
+        """replace() rebuilds fitness_values; if the two ever drift apart,
+        best_solution() would index into the wrong individual."""
+        engine = BitGAEngine(problem=onemax_small, population_size=10, bitstring_length=10, seed=1, elitism=2)
+        population = engine.initialize()
+        engine.evaluate(population)
+
+        for _ in range(5):
+            offspring = engine.breed(engine.select(population))
+            engine.evaluate(offspring)
+            population = engine.replace(population, offspring)
+
+            assert len(engine.fitness_values) == len(population)
+            for genome, score in zip(population, engine.fitness_values):
+                assert onemax_small.fitness(genome) == score
+
+    def test_best_fitness_never_decreases_across_generations(self):
+        """Without elitism the best individual can be lost; with it, the best
+        fitness in the population must be monotonically non-decreasing."""
+        problem = OneMaxProblem(length=40)
+        engine = BitGAEngine(
+            problem=problem, population_size=20, generations=30,
+            bitstring_length=40, seed=3, mutation_rate=0.05, elitism=2,
+        )
+
+        population = engine.evaluate(engine.initialize())
+        best_so_far = max(engine.fitness_values)
+
+        for _ in range(30):
+            offspring = engine.breed(engine.select(population))
+            engine.evaluate(offspring)
+            population = engine.replace(population, offspring)
+
+            current_best = max(engine.fitness_values)
+            assert current_best >= best_so_far
+            best_so_far = current_best
 
 
 class TestBestSolution:
