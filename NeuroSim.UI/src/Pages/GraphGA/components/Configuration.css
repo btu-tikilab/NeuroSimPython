@@ -498,3 +498,9 @@
 .app-layout--light .graph-preview{
     border:2px dashed #d1d5db;
 }
+.validation-error {
+  color: #f87171;
+  font-size: 12px;
+  margin-top: 6px;
+  line-height: 1.4;
+}

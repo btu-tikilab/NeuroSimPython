@@ -37,6 +37,116 @@ const Configuration = ({ selectedParadigm, selectedProblem, back, onRun }) => {
   const [mutationRate, setMutationRate] = useState(0.02);
   const [eliteCount, setEliteCount] = useState(2);
   const [targetFitness, setTargetFitness] = useState(100);
+  const [validationErrors, setValidationErrors] = useState({});
+  
+const validateConfiguration = () => {
+  const errors = {};
+
+  // Required values and integer validation
+  const integerFields = [
+    ["Node Count", nodeCount, 1],
+    ["Population Size", populationSize, 2],
+    ["Max Generations", generations, 1],
+    ["Random Seed", randomSeed, 0],
+    ["Elite Count", eliteCount, 0],
+  ];
+
+  integerFields.forEach(([name, value, minimum]) => {
+    if (
+      value === "" ||
+      value === null ||
+      !Number.isFinite(Number(value)) ||
+      !Number.isInteger(Number(value)) ||
+      Number(value) < minimum
+    ) {
+      errors[name] =
+        `${name} must be an integer greater than or equal to ${minimum}.`;
+    }
+  });
+
+  // Tournament size is relevant only for Tournament selection
+  if (parentSelection === "Tournament") {
+    if (
+      tournamentSize === "" ||
+      !Number.isFinite(Number(tournamentSize)) ||
+      !Number.isInteger(Number(tournamentSize)) ||
+      Number(tournamentSize) < 1
+    ) {
+      errors["Tournament Size"] =
+        "Tournament size must be a positive integer.";
+    } else if (Number(tournamentSize) > Number(populationSize)) {
+      errors["Tournament Size"] =
+        "Tournament size cannot exceed population size.";
+    }
+  }
+
+  // Elitism must fit within the population
+  if (
+    Number.isInteger(Number(populationSize)) &&
+    Number(populationSize) >= 2 &&
+    Number.isInteger(Number(eliteCount)) &&
+    Number(eliteCount) > Number(populationSize)
+  ) {
+    errors["Elite Count"] =
+      "Elite count cannot exceed population size.";
+  }
+
+  // Probability values
+  if (
+    !Number.isFinite(Number(crossoverRate)) ||
+    Number(crossoverRate) < 0 ||
+    Number(crossoverRate) > 1
+  ) {
+    errors["Crossover Rate"] =
+      "Crossover rate must be between 0 and 1.";
+  }
+
+  if (
+    !Number.isFinite(Number(mutationRate)) ||
+    Number(mutationRate) < 0 ||
+    Number(mutationRate) > 1
+  ) {
+    errors["Mutation Rate"] =
+      "Mutation rate must be between 0 and 1.";
+  }
+
+  // Non-negative fitness parameters
+  if (
+    !Number.isFinite(Number(connectivityBonus)) ||
+    Number(connectivityBonus) < 0
+  ) {
+    errors["Connectivity Bonus"] =
+      "Connectivity bonus must be non-negative.";
+  }
+
+  if (
+    !Number.isFinite(Number(sparsityPenalty)) ||
+    Number(sparsityPenalty) < 0
+  ) {
+    errors["Sparsity Penalty"] =
+      "Sparsity penalty must be non-negative.";
+  }
+
+  // Non-negative target fitness
+  if (
+    !Number.isFinite(Number(targetFitness)) ||
+    Number(targetFitness) < 0
+  ) {
+    errors["Target Fitness"] =
+      "Target fitness must be a non-negative number.";
+  }
+
+  setValidationErrors(errors);
+  return Object.keys(errors).length === 0;
+};
+const renderError = (field) =>
+  validationErrors[field] ? (
+    <p className="validation-error" role="alert">
+      {validationErrors[field]}
+    </p>
+  ) : null;
+
+
 
   return (
     <div className="configuration-page">
@@ -210,6 +320,7 @@ const Configuration = ({ selectedParadigm, selectedProblem, back, onRun }) => {
                   value={populationSize} 
                   onChange={(e) => setPopulationSize(Math.max(2, Number(e.target.value)))}
                 />
+                {renderError("Population Size")}
               </div>
 
               <div className="form-group">
@@ -223,6 +334,7 @@ const Configuration = ({ selectedParadigm, selectedProblem, back, onRun }) => {
                   value={generations} 
                   onChange={(e) => setGenerations(Math.max(1, Number(e.target.value)))}
                 />
+                {renderError("Max Generations")}
               </div>
 
               <div className="form-group">
@@ -252,6 +364,7 @@ const Configuration = ({ selectedParadigm, selectedProblem, back, onRun }) => {
                     value={tournamentSize} 
                     onChange={(e) => setTournamentSize(Math.max(1, Number(e.target.value)))}
                   />
+                  {renderError("Tournament Size")}
                 </div>
               )}
 
@@ -285,6 +398,7 @@ const Configuration = ({ selectedParadigm, selectedProblem, back, onRun }) => {
                   value={crossoverRate} 
                   onChange={(e) => setCrossoverRate(Math.max(0, Math.min(1, Number(e.target.value))))}
                 />
+                {renderError("Crossover Rate")}
               </div>
 
               <div className="form-group">
@@ -316,6 +430,7 @@ const Configuration = ({ selectedParadigm, selectedProblem, back, onRun }) => {
                   value={mutationRate} 
                   onChange={(e) => setMutationRate(Math.max(0, Math.min(1, Number(e.target.value))))}
                 />
+                {renderError("Mutation Rate")}
               </div>
 
               <div className="form-group">
@@ -329,6 +444,7 @@ const Configuration = ({ selectedParadigm, selectedProblem, back, onRun }) => {
                   value={eliteCount} 
                   onChange={(e) => setEliteCount(Math.max(0, Number(e.target.value)))}
                 />
+                {renderError("Elite Count")}
               </div>
 
               <div className="form-group">
@@ -342,6 +458,7 @@ const Configuration = ({ selectedParadigm, selectedProblem, back, onRun }) => {
                   value={targetFitness} 
                   onChange={(e) => setTargetFitness(Math.max(0, Number(e.target.value)))}
                 />
+                {renderError("Target Fitness")}
               </div>
             </div>
           </div>
@@ -445,6 +562,9 @@ const Configuration = ({ selectedParadigm, selectedProblem, back, onRun }) => {
         <button
           className="run-btn"
           onClick={() => {
+            if (!validateConfiguration()) {
+              return;
+            }
             onRun({
               problem: selectedProblem,
               populationSize,

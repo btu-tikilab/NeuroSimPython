@@ -44,3 +44,27 @@
   cursor: pointer;
 }
 .paradigm-card button:hover { opacity: 0.88; }
+
+.paradigm-selection-page .paradigm-card:has(button:disabled) {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+/* Prevent hover effects on disabled cards */
+.paradigm-selection-page .paradigm-card:has(button:disabled):hover {
+  border-color: #2d3555;
+  background: #1e2235;
+}
+
+/* Disabled buttons */
+.paradigm-selection-page .paradigm-card button:disabled {
+  background: #374151;
+  color: #9ca3af;
+  cursor: not-allowed;
+  opacity: 1;
+}
+
+/* Prevent hover styling on disabled buttons */
+.paradigm-selection-page .paradigm-card button:disabled:hover {
+  opacity: 1;
+}

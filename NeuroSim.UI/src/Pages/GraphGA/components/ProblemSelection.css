@@ -351,3 +351,56 @@
     background:#6D28D9;
 
 }
+
+/* Problem under development */
+
+.problem-card.problem-in-development {
+    opacity: 0.75;
+    cursor: not-allowed;
+}
+
+.problem-card.problem-in-development:hover {
+    transform: none;
+}
+
+/* Development label */
+.development-badge {
+    display: inline-block;
+    margin: 10px 0;
+    padding: 7px 14px;
+    border-radius: 20px;
+    background: #3b3422;
+    color: #fbbf24;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* Coming Soon button */
+.problem-card button.development-button,
+.problem-card button.development-button:disabled {
+    width: 100%;
+    background: #374151;
+    color: #d1d5db;
+    border: 1px solid #4b5563;
+    cursor: not-allowed;
+    opacity: 1;
+}
+
+.problem-card button.development-button:hover {
+    background: #374151;
+}
+
+/* Light theme */
+.app-layout--light .development-badge {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.app-layout--light
+.problem-card button.development-button,
+.app-layout--light
+.problem-card button.development-button:disabled {
+    background: #e5e7eb;
+    color: #6b7280;
+    border-color: #d1d5db;
+}
