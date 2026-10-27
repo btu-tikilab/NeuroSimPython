@@ -1,0 +1,506 @@
+.configuration-page{
+    padding:30px;
+}
+
+/* ==========================================
+   Cards
+========================================== */
+
+.config-card{
+    background:#121827;
+    border:1px solid #283246;
+    border-radius:18px;
+    padding:25px;
+    margin-bottom:25px;
+}
+
+.card-title{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-bottom:20px;
+}
+
+.card-title svg{
+    font-size:24px;
+    color:#8B5CF6;
+}
+
+/* ==========================================
+   Buttons
+========================================== */
+
+.button-section{
+    display:flex;
+    justify-content:space-between;
+    margin-top:30px;
+}
+
+.back-btn,
+.run-btn{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:14px 28px;
+    border:none;
+    border-radius:12px;
+    cursor:pointer;
+}
+
+.back-btn{
+    background:#6b7280;
+    color:#fff;
+}
+
+.run-btn{
+    background:#7C3AED;
+    color:#fff;
+}
+
+/* ==========================================
+   Layout
+========================================== */
+
+.configuration-layout{
+    display:grid;
+    grid-template-columns:2fr 1fr;
+    gap:24px;
+    align-items:start;
+}
+
+.left-panel,
+.right-panel{
+    display:flex;
+    flex-direction:column;
+    gap:24px;
+}
+
+/* ==========================================
+   Progress
+========================================== */
+
+.progress-container{
+    display:flex;
+    justify-content:space-between;
+    margin:30px 0;
+}
+
+.progress-step{
+    flex:1;
+    text-align:center;
+    position:relative;
+}
+
+.progress-step:not(:last-child)::after{
+    content:"";
+    position:absolute;
+    top:18px;
+    left:60%;
+    width:80%;
+    height:2px;
+    background:#374151;
+}
+
+.progress-circle{
+    width:36px;
+    height:36px;
+    border-radius:50%;
+    background:#374151;
+    color:#fff;
+    font-weight:bold;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    margin:auto;
+}
+
+.progress-step.active .progress-circle{
+    background:#7C3AED;
+}
+
+.progress-step.completed .progress-circle{
+    background:#10B981;
+}
+
+.progress-step p{
+    margin-top:10px;
+    font-size:14px;
+}
+
+/* ==========================================
+   Forms
+========================================== */
+
+.config-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:20px;
+}
+
+.form-group{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+}
+
+.form-group label{
+    font-size:14px;
+    font-weight:600;
+}
+
+.form-group input,
+.form-group select{
+    width:100%;
+    padding:12px;
+    border-radius:10px;
+    border:1px solid #374151;
+    background:#1f2937;
+    color:#fff;
+    cursor:pointer;
+}
+
+.form-group input::placeholder{
+    color:#9ca3af;
+    opacity:1;
+}
+
+/* ==========================================
+   Graph Preview
+========================================== */
+
+.graph-preview{
+    height:280px;
+    border:2px dashed #374151;
+    border-radius:16px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    color:#9CA3AF;
+}
+
+/* ==========================================
+   Statistics
+========================================== */
+
+.stats-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:16px;
+}
+
+.stat-box{
+    background:#1f2937;
+    border-radius:12px;
+    padding:18px;
+    text-align:center;
+}
+
+.stat-box h4{
+    font-size:14px;
+    color:#9CA3AF;
+    margin-bottom:8px;
+}
+
+.stat-box p{
+    font-size:22px;
+    font-weight:bold;
+}
+
+/* ==========================================
+   Light Theme
+========================================== */
+
+.app-layout--light .config-card{
+    background:#fff;
+    border:1px solid #e5e7eb;
+}
+
+.app-layout--light .card-title svg{
+    color:#8B5CF6;
+}
+
+.app-layout--light .run-btn{
+    background:#7C3AED;
+    color:#fff;
+}
+
+.app-layout--light .back-btn{
+    background:#121315;
+    color:#fff;
+}
+
+.app-layout--light .form-group label{
+    color:#111827;
+}
+
+.app-layout--light .form-group input::placeholder{
+    color:#6b7280;
+    opacity:1;
+}
+
+/* 
+   This selector worked correctly in your project,
+   so keep it.
+*/
+.app-layout--light input,
+.app-layout--light select{
+    background:#fff !important;
+    color:#111827 !important;
+    border:1px solid #d1d5db !important;
+}
+
+.app-layout--light .graph-preview{
+    border:2px dashed #d1d5db;
+    color:#6b7280;
+}
+
+.app-layout--light .stat-box{
+    background:#f9fafb;
+    border:1px solid #e5e7eb;
+}
+
+.app-layout--light .stat-box h4{
+    color:#6b7280;
+}
+
+.app-layout--light .progress-step p{
+    color:#111827;
+}
+
+.app-layout--light .progress-step:not(:last-child)::after{
+    background:#d1d5db;
+}
+
+.app-layout--light .progress-circle{
+    background:#d1d5db;
+}
+
+/* ==========================================
+   Responsive
+========================================== */
+
+@media (max-width:1100px){
+
+    .configuration-layout{
+        grid-template-columns:1fr;
+    }
+
+}
+
+@media (max-width:768px){
+
+    .config-grid{
+        grid-template-columns:1fr;
+    }
+
+    .stats-grid{
+        grid-template-columns:1fr;
+    }
+
+    .progress-container{
+        flex-wrap:wrap;
+        gap:20px;
+    }
+
+}
+/* ==========================================
+   Toggle Switch
+========================================== */
+
+.toggle-container{
+
+    display:flex;
+    align-items:center;
+    gap:12px;
+
+}
+
+.switch{
+
+    position:relative;
+
+    display:inline-block;
+
+    width:50px;
+
+    height:28px;
+
+}
+
+.switch input{
+
+    opacity:0;
+
+    width:0;
+
+    height:0;
+
+}
+
+.slider{
+
+    position:absolute;
+
+    cursor:pointer;
+
+    inset:0;
+
+    background:#4b5563;
+
+    border-radius:30px;
+
+    transition:.3s;
+
+}
+
+.slider::before{
+
+    content:"";
+
+    position:absolute;
+
+    width:22px;
+
+    height:22px;
+
+    left:3px;
+
+    top:3px;
+
+    background:white;
+
+    border-radius:50%;
+
+    transition:.3s;
+
+}
+
+.switch input:checked + .slider{
+
+    background:#7C3AED;
+
+}
+
+.switch input:checked + .slider::before{
+
+    transform:translateX(22px);
+
+}
+
+.toggle-text{
+
+    font-weight:600;
+
+    min-width:30px;
+
+}
+.app-layout--light .slider{
+
+    background:#d1d5db;
+
+}
+
+.app-layout--light .switch input:checked + .slider{
+
+    background:#7C3AED;
+
+}
+
+.app-layout--light .toggle-text{
+
+    color:#111827;
+
+}
+/* ==========================================
+   Graph Preview Header
+========================================== */
+
+.preview-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:20px;
+
+}
+
+.refresh-btn{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:8px;
+
+    background:#7C3AED;
+
+    color:white;
+
+    border:none;
+
+    border-radius:10px;
+
+    padding:10px 16px;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+}
+
+.refresh-btn:hover{
+
+    background:#6D28D9;
+
+}
+.app-layout--light .refresh-btn{
+
+    background:#7C3AED;
+
+    color:white;
+
+}
+.stat-icon{
+    font-size:20px;
+    color:#8B5CF6;
+    margin-bottom:10px;
+}
+
+/* Label + Info Icon */
+
+.form-group label{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+
+.info-icon{
+    color:#9ca3af;
+    cursor:pointer;
+    font-size:16px;
+}
+
+.app-layout--light .info-icon{
+    color:#6b7280;
+}
+.graph-preview{
+    height:280px;
+}
+.graph-preview{
+    height:320px;
+    border:2px dashed #374151;
+    border-radius:16px;
+    overflow:hidden;
+}
+.app-layout--light .graph-preview{
+    border:2px dashed #d1d5db;
+}
+.validation-error {
+  color: #f87171;
+  font-size: 12px;
+  margin-top: 6px;
+  line-height: 1.4;
+}

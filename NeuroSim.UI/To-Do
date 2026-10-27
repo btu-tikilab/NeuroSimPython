@@ -1,0 +1,30 @@
+# NeuroSim - Development TODO
+
+This document tracks pending improvements and completed tasks for the NeuroSim project.
+
+---
+
+## ✅ Completed This Week
+
+- [x] Implemented Graph Pathfinding backend (GraphGA).
+- [x] Fixed Wiki routing to prevent blank pages for GA/GP/ES/EP.
+- [x] Designed "Module in Development" landing screens for TSP and MazeNet.
+- [x] Created `check_all.sh` master script for automated testing and compliance checks.
+- [x] Drafted the academic internship report for GraphGA and removed it from Git tracking.
+- [x] Made Wiki Key Concepts (like "Population") interactive with expandable definitions and examples.
+
+---
+
+## 🚧 Next Simple Tasks
+
+### 1. Integrate BitGA
+- Connect the frontend BitGA UI to the `NeuroSim.Engine` backend.
+- Allow users to select the OneMax problem and run the genetic algorithm.
+
+### 2. Verify All Test Cases
+- Check in all pending test cases for the engine.
+- Ensure 100% pass rate using `check_all.sh`.
+
+### 3. Validation and Feedback
+- Add simple UI warnings for invalid parameter combinations (e.g., negative mutation rates).
+- Verify that random seeding works correctly in the UI to produce consistent results.

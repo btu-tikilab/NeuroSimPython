@@ -13,4 +13,9 @@ These are lightweight toy problems demonstrating the "Stable Baselines" evolutio
 Implemented as `BaseAlgorithm` subclasses:
 - `onemax.py`: binary genome maximizing number of ones
 - `regression_linear.py`: toy linear regression via GA on an 8-bit encoded parameter
+- `xor_mlp_nas.py`: thin runner — uses `neurosim_engine.binary_ga.BitstringGA` + `problems/xor_mlp_nas.py` (XOR / numpy MLP NAS)
+
+Modular layout for more bit-based NAS objectives:
+- `NeuroSim.Engine/src/neurosim_engine/binary_ga.py` — generic bit GA
+- `NeuroSimPython/problems/` — decode + inner solver + `make_*_fitness_fn` per task
 

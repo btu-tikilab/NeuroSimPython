@@ -117,7 +117,8 @@ def process_file(path: Path) -> bool:
     new = prepend_to_text(path, style, text)
     if new is None:
         return False
-    path.write_text(new, encoding="utf-8", newline="\n")
+    with open(path, "w", encoding="utf-8", newline="\n") as f:
+        f.write(new)
     return True
 
 
